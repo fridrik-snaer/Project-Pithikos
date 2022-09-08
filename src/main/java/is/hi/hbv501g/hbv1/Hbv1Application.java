@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class Hbv1Application {
-
+    //Valdi var hér
     public static void main(String[] args) {
         SpringApplication.run(Hbv1Application.class, args);
     }
