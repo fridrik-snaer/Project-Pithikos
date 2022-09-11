@@ -1,0 +1,146 @@
+HBV501G - Fall semester 2022 - Inception
+Group 16
+Friðrik Snær Björnsson - fsb3@hi.is - 010801-3460
+Ívan Már Þrastarson - imt1@hi.is - 300801-2770
+Valdimar Örn Sverrisson - vos9@hi.is. 310101-2140
+Kristján Leó Guðmundsson - klg12@hi.is - 2310012040
+
+1. Vision and Scope document for your project
+
+* Sect. 1.5 (Vision statement)
+   * For students and enthusiast who want to improve their typing/spelling the TypingGame is the typing learning experience that keeps them practicing unlike “MonkeyType”, “Ten Fast Fingers” and “Ritfinnur” our product has features that tap into their competitive nature as well as being specifically made with Icelandic in mind. They can use our program to practice their, typing speed, typing accuracy as well a subconsciously practicing Icelandic vocabulary and spelling.
+
+* 1.4 Success metrics (“How can we tell whether we are successful?”)
+   * You could choose to measure success on e.g. number of accounts made, number of words typed etc. The real metric would likely be some measure of retention with the program, what percent of people come again and again. If you can keep people getting them in should be no issue since active users are likely to tell their friends and such. You could also capture this idea roughly with a figure such as active monthly users which would probably be easier to estimate therefore that would be the metric used to measure success.
+
+* 2.2 Scope of initial release (“What should be rolled out first?”)
+   * We will prioritize the core functionality of the program and making that run as smoothly as possible. For example the feedback on making errors in the core practice mode should be intuitive and fast and the user interface should look good and the user should have an extensive collection of text to practice with as to not run into the same text portion multiple times. Statistics about your improvement in typing should also be a priority since visible self improvement can be a big motivator in keeping on practicing. The daily challenge mode should be a priority since the competitive element of the program is one of our standouts. Although not as big of a priority as the others the finger placement lessons should not be overlooked as that could be a hook to get people started with the program.
+
+
+2. Use Case document
+
+Use case 1
+   * Use case name
+      * Practicing typing speed
+   * Primary actor
+      * User
+   * Preconditions
+      * User has means of inputting text
+   * Success guarantee
+      * Program displays statistics about the typing that occurred (speed, accuracy etc.)
+      * The program saves the users statistics if they are logged in
+   * Main success scenario
+      * User enters program
+      * User chooses mode if he wants (random words, literature, numbers, etc.)
+      * User starts typing
+      * Program gives immediate response if typing is incorrect
+         * For each letter at a time
+      * User types everything correctly
+      * User finishes text
+      * User repeats previous steps or exits
+   * Extensions/alternate scenarios
+      * The user mistypes a letter
+         * The program lets the user know by making the letter flash red, the user can choose between using backspace to correct the error losing time or continuing and losing accuracy
+      * The user does one too many errors for their liking and wants to restart the text portion
+         * The program offers a restart portion option
+      * The user gets frustrated by being slow/inaccurate and shuts the website off before he has finished the text
+         * Little you can do sadly
+      * The user does not like the look of the text they are supposed to write
+         * The program offers option to skip this text portion
+   * Miscellaneous/open issues
+      * The user adds one extra letter and writes the rest of the sentence correctly but the program is too stiff in its definition of correctness to recognize that.
+
+Use case 2
+   * Use case name
+      * Have lessons on finger placement
+   * Primary actor
+      * User (student)
+   * Preconditions
+      * User is logged in to track progress 
+      * Program remembers what lessons user has finished(including not started)
+   * Success guarantee
+      * User has learned/is more comfortable with proper finger placement
+      * User is in good mood
+      * Program saves where user is in his studies
+      * Program offers next lesson in the series
+      * Program offers to exit lessons
+   * Main success scenario
+      * User boots up program/website
+      * User starts browsing lessons
+         * User sees where he last left off (if he has already done a lesson)
+      * User chooses a lesson
+      * User does lesson
+      * User finishes lesson
+      * User selects next lesson or chooses a new one
+      * User repeats previous steps or user exits
+   * Extensions/alternate scenarios
+      * User exits in the middle of a lesson
+         * Not much you can do
+      * User does not like his “run” at the lesson and wants to start again
+         * The program offers a restart lesson option
+      * User wants to revisit something from just before
+         * The user can skip back a few steps
+   * Miscellaneous/open issues
+      * Do we display a photo of where your fingers should be at each moment
+      * User “cheats” and does not develop better finger position during lessons
+         * Minimize cheating somehow
+
+Use case 3
+   * Use case name
+      * Daily challenge
+   * Primary actor
+      * User
+   * Preconditions
+      * User is logged in
+      * User has means of inputting text
+   * Success guarantee
+      * The program offers the user a share your progress option
+      * The program saves the users stats for the daily challenge if he is logged in
+      * The program updates the users “streak” if he is logged in
+   * Main success scenario
+      * User loads website
+      * User starts challenge
+      * User finishes challenge
+      * User shares results with their friends
+      * User is directed to leaderboard for current daily challenge
+   * Extensions/alternate scenarios
+      * The user does not utilize the share option
+   * Miscellaneous/open issues
+      * How to incentivise people to participate in the daily challenge
+         * Being highly shareable and the ability to collect streaks as a gamification is at least an attempt to do so
+* Describe at least 5 more use cases in brief use case format
+   * Accounts
+      * The user opens the site, creates an account and practises their typing. The subsequent times he opens the site he can see if he has improved either his typing speed or accuracy over time in a statistics section.
+   * Text submission
+      * User can submit text for others to practice their typing, other users can enter an approval mode so they are aware they are not typing fully approved text and can approve it themselves, full approval would mean unanimous approval from five approvers or something like that.
+   * Comparisons
+      * When the user finishes a typing exercise he can see how his performance stacks up to others, e.g. “you were in the top 10% in typing speed in that exercise”.
+   * Friend list
+      * Users can become online friends with each other and see each other’s statistics, and find each other via a friend list or add each other through an id system similar to Discord.
+   * Leaderboard
+      * A global leaderboard where you can see people’s top scores. A user must consent to be shown on the leaderboard.
+
+
+3. Project Plan
+* Elaboration (Not use cases but still part of the plan)
+   * Database
+   * Backend code structure
+   * Website runs locally
+* Construction 1
+   * Practicing typing speed
+   * Accounts
+   * Daily challenge
+   * Comparisons
+* Construction 2
+   * Finger placement lessons
+   * Text submissions
+   * Friend list
+   * Leaderboard
+* Transition
+   * Website launch
+
+
+4. Project skeleton 
+* Github repo: https://github.com/fridrik-snaer/Project-Pithikos
+* Here is the project structure
+* Here you can see that everybody has made a meaningful commitment.
