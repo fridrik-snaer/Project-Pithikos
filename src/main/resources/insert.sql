@@ -1,5 +1,5 @@
-"
--""-Or"ð--
+
+--Orð--
 Insert into Words (word,lang,rank) Values("sem","ISL",1)
 Insert into Words (word,lang,rank) Values("ég","ISL",2)
 Insert into Words (word,lang,rank) Values("hans","ISL",3)
