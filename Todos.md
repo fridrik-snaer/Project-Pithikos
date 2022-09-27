@@ -1,3 +1,5 @@
+## Allir að installa node
+
 - Gera React framenda
   - Tengja react framenda við Java spring bakenda
 
