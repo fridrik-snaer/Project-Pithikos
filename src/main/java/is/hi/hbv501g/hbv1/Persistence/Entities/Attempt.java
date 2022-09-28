@@ -4,11 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Entity
-public class Attempt {
+public interface Attempt {
+    /*
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
-    //TODO: fill inn attributes of Attempts
+    private long user_id;
+    private Timestamp time_start;
+    private Timestamp time_finish;
+    private int keystrokes;
+    private int correct;
+    private boolean completed;
+    //Language
+    */
 }

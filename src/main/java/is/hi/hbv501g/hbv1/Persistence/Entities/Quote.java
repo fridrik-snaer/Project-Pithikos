@@ -14,18 +14,20 @@ public class Quote {
     private String text;
     private String language;
     private String origin; // Author & Reference
+    private boolean accepted;
+    private boolean daily;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
     public Quote() {
     }
 
-    public Quote(String text, String language, String origin) {
+    public Quote(String text, String language, String origin, boolean accepted, boolean daily) {
         this.text = text;
         this.language = language;
         this.origin = origin;
-        this.createdAt = new Timestamp(System.currentTimeMillis());
-        this.updatedAt = new Timestamp(System.currentTimeMillis());
+        this.accepted = accepted;
+        this.daily = daily;
     }
 
     //<editor-fold desc="Getters & Setters>
