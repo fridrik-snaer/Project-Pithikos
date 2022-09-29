@@ -30,7 +30,7 @@ public class Stats {
     }
 
 //    <editor-fold desc="Functions">
-    public void Update_Stats(List<Attempt> attempts) {
+    public void Update_Stats(List<QuoteAttempt> attempts) {
         //update stat of user bla bla
     }
     //TODO: decide which functions stats should have and implement them

@@ -1,16 +1,18 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "quotes")
 public class Quote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
     private String text;
-    private Lang language;
+    private String language;
     private String origin; // Author & Reference
     private boolean accepted;
     private boolean daily;
@@ -20,18 +22,12 @@ public class Quote {
     public Quote() {
     }
 
-    public Quote(String text, Lang language, String origin, boolean accepted, boolean daily) {
+    public Quote(String text, String language, String origin, boolean accepted, boolean daily) {
         this.text = text;
         this.language = language;
         this.origin = origin;
         this.accepted = accepted;
         this.daily = daily;
-    }
-
-    public Quote(String text, Lang language, String origin) {
-        this.text = text;
-        this.language = language;
-        this.origin = origin;
     }
 
     //<editor-fold desc="Getters & Setters>
@@ -43,11 +39,11 @@ public class Quote {
         this.text = text;
     }
 
-    public Lang getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Lang language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
