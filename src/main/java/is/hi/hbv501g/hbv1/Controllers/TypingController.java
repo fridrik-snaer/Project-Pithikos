@@ -18,7 +18,7 @@ public class TypingController {
 
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String indexGET() {
-        return "test";
+        return "{\"words: [the, monkey, will, rule, the, world]\"}";
     }
 
     @RequestMapping(value="/", method = RequestMethod.POST)
