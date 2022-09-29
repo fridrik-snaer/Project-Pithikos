@@ -1,15 +1,13 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "words")
 public class Word {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private float ID;
+    private long ID;
     private String text;
     private String language;
     private int rank;

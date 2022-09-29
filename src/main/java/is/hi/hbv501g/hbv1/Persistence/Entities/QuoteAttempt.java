@@ -1,10 +1,10 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "quoteAttempts")
 public class QuoteAttempt /*extends Attempt*/ {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

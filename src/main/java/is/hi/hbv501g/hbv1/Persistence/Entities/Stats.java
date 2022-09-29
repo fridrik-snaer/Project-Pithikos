@@ -1,8 +1,14 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
+import javax.persistence.*;
 import java.util.List;
-
+@Entity
 public class Stats {
+    @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long Id;
+    @OneToOne(fetch = FetchType.LAZY)
+    private User user;
     private float avg_wpm;
     private float avg_acc;
     private float tests_taken;
