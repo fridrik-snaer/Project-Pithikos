@@ -4,11 +4,21 @@ import is.hi.hbv501g.hbv1.Persistence.Entities.Lang;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Lesson;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.LessonRepository;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteRepository;
 import is.hi.hbv501g.hbv1.Services.TypingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class TypingServiceImplementation implements TypingService {
+    private QuoteRepository quoteRepository;
+    @Autowired
+    public TypingServiceImplementation(QuoteRepository quoteRepository) {
+        this.quoteRepository = quoteRepository;
+    }
+
     @Override
     public List<Word> getRandomWords() {
         return null;
@@ -36,6 +46,6 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public Quote submitQuote(Quote quote) {
-        return null;
+        return quoteRepository.save(quote);
     }
 }
