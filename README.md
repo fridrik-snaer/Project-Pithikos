@@ -7,3 +7,13 @@ Kristján Leó Guðmundsson og
 Valdimar Örn Sverrisson
 
 Haustönn Háskóla Íslands 2022
+
+## Til að keyra með framenda:
+Keyra þetta repository í intellij (ætti að keyra á http://localhost:8080)
+
+Hlaða niður frontend repository og vera með npm á terminal
+Keyra npm install til öryggis
+Keyra npm start til að keyra
+Opna http://localhost:3000
+
+Type away!
