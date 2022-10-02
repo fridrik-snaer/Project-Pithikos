@@ -22,14 +22,15 @@ public class Stats {
         this.tests_completed = 0;
     }
 
-    public Stats(float avg_wpm, float avg_acc, float tests_taken, float tests_completed) {
+    public Stats(User user, float avg_wpm, float avg_acc, float tests_taken, float tests_completed) {
+        this.user = user;
         this.avg_wpm = avg_wpm;
         this.avg_acc = avg_acc;
         this.tests_taken = tests_taken;
         this.tests_completed = tests_completed;
     }
 
-//    <editor-fold desc="Functions">
+    //    <editor-fold desc="Functions">
     public void Update_Stats(List<QuoteAttempt> attempts) {
         //update stat of user bla bla
     }

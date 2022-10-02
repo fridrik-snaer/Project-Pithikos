@@ -1,12 +1,12 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "quotes")
 public class Quote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +18,8 @@ public class Quote {
     private boolean daily;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    @OneToMany(mappedBy = "quote", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuoteAttempt> quoteAttempts = new ArrayList<>();
 
     public Quote() {
     }

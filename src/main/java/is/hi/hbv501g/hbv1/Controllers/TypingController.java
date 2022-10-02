@@ -30,7 +30,7 @@ public class TypingController {
 
     @CrossOrigin
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String indexGET() {
+    public String getAllWords() {
         List<Word> words = typingService.getRandomWords();
         ObjectMapper obj = new ObjectMapper();
         String jsonStr = "";

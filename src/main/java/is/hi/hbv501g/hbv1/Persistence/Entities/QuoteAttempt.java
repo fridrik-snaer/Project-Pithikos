@@ -9,7 +9,10 @@ public class QuoteAttempt /*extends Attempt*/ {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
-    private long user_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Quote quote;
     private Timestamp time_start;
     private Timestamp time_finish;
     private int keystrokes;
@@ -23,8 +26,8 @@ public class QuoteAttempt /*extends Attempt*/ {
     public QuoteAttempt() {
     }
 
-    public QuoteAttempt(long user_id, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
-        this.user_id = user_id;
+    public QuoteAttempt(User user, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
+        this.user = user;
         this.time_start = time_start;
         this.time_finish = time_finish;
         this.keystrokes = keystrokes;
@@ -33,13 +36,13 @@ public class QuoteAttempt /*extends Attempt*/ {
         this.daily = daily;
         this.canpost = canpost;
     }
-
-    public long getUser_id() {
-        return user_id;
+    //<editor-fold desc="Getters & Setters">
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Timestamp getTime_start() {
@@ -97,4 +100,5 @@ public class QuoteAttempt /*extends Attempt*/ {
     public void setCanpost(boolean canpost) {
         this.canpost = canpost;
     }
+    //</editor-fold>
 }
