@@ -2,6 +2,7 @@ package is.hi.hbv501g.hbv1.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Lang;
+import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
 import is.hi.hbv501g.hbv1.Services.TypingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,21 @@ public class TypingController {
         String jsonStr = "";
         try {
             jsonStr = obj.writeValueAsString(words);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return jsonStr;
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getQuotesByLanguage(@PathVariable String lang) {
+        Lang language = Lang.valueOf(lang);
+        List<Quote> quotes = typingService.getQuotes(language);
+        ObjectMapper obj = new ObjectMapper();
+        String jsonStr = "";
+        try {
+            jsonStr = obj.writeValueAsString(quotes);
         } catch(IOException e) {
             e.printStackTrace();
         }

@@ -41,7 +41,9 @@ public class TypingServiceImplementation implements TypingService {
     }
 
     @Override
-    public List<Quote> getQuotes(Lang lang) {return null;}
+    public List<Quote> getQuotes(Lang lang) {
+        return quoteRepository.findAllByAcceptedTrueAndDailyFalseAndLanguage(lang);
+    }
 
     @Override
     public List<Lesson> getLessons(int lvl, Lang lang) {

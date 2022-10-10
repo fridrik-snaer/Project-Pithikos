@@ -12,7 +12,7 @@ public class Quote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
     private String text;
-    private String language;
+    private Lang language;
     private String origin; // Author & Reference
     private boolean accepted;
     private boolean daily;
@@ -24,7 +24,7 @@ public class Quote {
     public Quote() {
     }
 
-    public Quote(String text, String language, String origin, boolean accepted, boolean daily) {
+    public Quote(String text, Lang language, String origin, boolean accepted, boolean daily) {
         this.text = text;
         this.language = language;
         this.origin = origin;
@@ -41,11 +41,11 @@ public class Quote {
         this.text = text;
     }
 
-    public String getLanguage() {
+    public Lang getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Lang language) {
         this.language = language;
     }
 
