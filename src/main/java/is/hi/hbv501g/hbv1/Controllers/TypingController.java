@@ -20,7 +20,6 @@ import java.util.List;
 public class TypingController {
 
     private TypingService typingService;
-    //TODO útfæra post request fyrir tungumál
 
     @Autowired
     public TypingController(TypingService typingService) {
@@ -28,61 +27,32 @@ public class TypingController {
     }
     @CrossOrigin
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllWords() {
+    public List<Word> getAllWords() {
         List<Word> words = typingService.getAllWords();
-        ObjectMapper obj = new ObjectMapper();
-        String jsonStr = "";
-        try {
-            jsonStr = obj.writeValueAsString(words);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return jsonStr;
+        return words;
     }
     @CrossOrigin
     @RequestMapping(value="/words/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getAllWordsOfLanguage(@PathVariable String lang) {
-
+    public List<Word> getAllWordsOfLanguage(@PathVariable String lang) {
         Lang language = Lang.valueOf(lang);
         List<Word> words = typingService.getRandomWordsByLanguage(language);
-        ObjectMapper obj = new ObjectMapper();
-        String jsonStr = "";
-        try {
-            jsonStr = obj.writeValueAsString(words);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return jsonStr;
+        return words;
     }
     @CrossOrigin
     @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getRandomWords(@PathVariable String lang,@PathVariable String rank) {
+    public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
         int ranking  = Integer.parseInt(rank);
         Lang language = Lang.valueOf(lang);
         List<Word> words = typingService.getRandomWords(language,ranking);
-        ObjectMapper obj = new ObjectMapper();
-        String jsonStr = "";
-        try {
-            jsonStr = obj.writeValueAsString(words);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return jsonStr;
+        return words;
     }
 
     @CrossOrigin
     @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getQuotesByLanguage(@PathVariable String lang) {
+    public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
         Lang language = Lang.valueOf(lang);
         List<Quote> quotes = typingService.getQuotes(language);
-        ObjectMapper obj = new ObjectMapper();
-        String jsonStr = "";
-        try {
-            jsonStr = obj.writeValueAsString(quotes);
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
-        return jsonStr;
+        return quotes;
     }
 
     @RequestMapping(value="/", method = RequestMethod.POST)

@@ -16,7 +16,7 @@ public class User {
     private String email;
     private Timestamp createdAt;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Stats stats;
+    private Stats stats = new Stats();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuoteAttempt> quoteAttempts = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -33,7 +33,6 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.stats = new Stats();
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
