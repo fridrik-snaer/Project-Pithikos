@@ -8,27 +8,27 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 public class UserController {
-    private User loggedIn;
     private UserServiceImplementation userServiceImplementation;
 
     @Autowired
     public UserController(UserServiceImplementation userServiceImplementation) {
-        this.loggedIn = null;
         this.userServiceImplementation = userServiceImplementation;
     }
     @CrossOrigin
-    @PostMapping(value="/login")
+    @GetMapping(value="/login")
     public void login(){
         //Tímabundin prófun
-        User user = new User("Fridrik","lykilord","fsb@gmail.com");
-        loggedIn = user;
+        User user = userServiceImplementation.findByID(4);
+        userServiceImplementation.login(user);
     }
     @CrossOrigin
     @RequestMapping(value="/getLogged", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public User getLogged(){
-        return loggedIn;
+        return userServiceImplementation.getLogged();
     }
 
     //Hér er hægt að setja skipunina:
@@ -39,5 +39,13 @@ public class UserController {
     public void createAccount(@RequestBody User user){
         User user_use = new User(user.getUsername(),user.getPassword(), user.getEmail());
         userServiceImplementation.create(user_use);
+    }
+
+    @CrossOrigin
+    @PostMapping(value="/changePassword",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void changePassword(@RequestBody Map<String, String> json){
+        int id = Integer.parseInt(json.get("user_id").toString());
+        String password = json.get("password").toString();
+        userServiceImplementation.changePassword(id,password);
     }
 }

@@ -10,7 +10,8 @@ import java.util.List;
 public interface UserService {
     User create(User user);
     void delete(User user);
-    User changePassword(User user,String newPassword);
+    User changePassword(int user_id, String newPassword);
     List<User> getFriends(User user);
     Relationship makeRelationship(User sender, User reciever);
+    User findByID(int id);
 }

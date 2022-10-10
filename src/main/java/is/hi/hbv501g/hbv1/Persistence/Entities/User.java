@@ -36,6 +36,13 @@ public class User {
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
+    public boolean equals(User user) {
+        if (this.Id== user.Id){
+            return true;
+        }
+        return false;
+    }
+
     //<editor-fold desc="Functions">
     //TODO: decide which functions User class should have and implement them
 

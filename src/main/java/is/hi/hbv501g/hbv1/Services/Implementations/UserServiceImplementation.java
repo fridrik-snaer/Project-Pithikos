@@ -12,11 +12,13 @@ import java.util.List;
 
 @Service
 public class UserServiceImplementation implements UserService {
+    private User loggedIn;
     private UserRepository userRepository;
     private RelationshipRepository relationshipRepository;
 
     @Autowired
     public UserServiceImplementation(UserRepository userRepository, RelationshipRepository relationshipRepository) {
+        this.loggedIn = null;
         this.userRepository = userRepository;
         this.relationshipRepository = relationshipRepository;
     }
@@ -30,9 +32,21 @@ public class UserServiceImplementation implements UserService {
     public void delete(User user) {
         userRepository.delete(user);
     }
-
+    //TODO græja equals
     @Override
-    public User changePassword(User user, String newPassword) {
+    public User changePassword(int user_id, String newPassword) {
+        System.out.println(user_id);
+        User user = this.findByID(user_id);
+        System.out.println(loggedIn.getUsername());
+        System.out.println(user.getUsername());
+        if (true/*loggedIn.equals(user)*/) {
+            userRepository.delete(user);
+            user.setPassword(newPassword);
+            User newUser = userRepository.save(user);
+            loggedIn = newUser;
+            return newUser;
+        }
+        System.out.println("Ekki sami loggaður inn og reynt að breyta lykilorði");
         return null;
     }
 
@@ -44,5 +58,22 @@ public class UserServiceImplementation implements UserService {
     @Override
     public Relationship makeRelationship(User sender, User reciever) {
         return null;
+    }
+
+    @Override
+    public User findByID(int id) {
+        return userRepository.findById(id);
+    }
+    public User login(User user){
+        loggedIn = user;
+        return user;
+    }
+    public User logout(){
+        User previous = loggedIn;
+        loggedIn = null;
+        return previous;
+    }
+    public User getLogged(){
+        return loggedIn;
     }
 }
