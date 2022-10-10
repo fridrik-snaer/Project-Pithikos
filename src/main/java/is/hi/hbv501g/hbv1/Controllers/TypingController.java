@@ -7,10 +7,7 @@ import is.hi.hbv501g.hbv1.Services.TypingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,16 +19,46 @@ import java.util.List;
 public class TypingController {
 
     private TypingService typingService;
+    //TODO útfæra post request fyrir tungumál
 
     @Autowired
     public TypingController(TypingService typingService) {
         this.typingService = typingService;
     }
-
     @CrossOrigin
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllWords() {
-        List<Word> words = typingService.getRandomWords();
+        List<Word> words = typingService.getAllWords();
+        ObjectMapper obj = new ObjectMapper();
+        String jsonStr = "";
+        try {
+            jsonStr = obj.writeValueAsString(words);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return jsonStr;
+    }
+    @CrossOrigin
+    @RequestMapping(value="/words/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getAllWordsOfLanguage(@PathVariable String lang) {
+
+        Lang language = Lang.valueOf(lang);
+        List<Word> words = typingService.getRandomWordsByLanguage(language);
+        ObjectMapper obj = new ObjectMapper();
+        String jsonStr = "";
+        try {
+            jsonStr = obj.writeValueAsString(words);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return jsonStr;
+    }
+    @CrossOrigin
+    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getRandomWords(@PathVariable String lang,@PathVariable String rank) {
+        int ranking  = Integer.parseInt(rank);
+        Lang language = Lang.valueOf(lang);
+        List<Word> words = typingService.getRandomWords(language,ranking);
         ObjectMapper obj = new ObjectMapper();
         String jsonStr = "";
         try {
