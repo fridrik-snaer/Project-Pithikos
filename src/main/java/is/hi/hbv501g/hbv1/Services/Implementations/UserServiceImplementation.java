@@ -25,6 +25,9 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public User create(User user) {
+        if (exists(user)){
+            return null;
+        }
         return userRepository.save(user);
     }
 
@@ -39,7 +42,7 @@ public class UserServiceImplementation implements UserService {
         User user = this.findByID(user_id);
         System.out.println(loggedIn.getUsername());
         System.out.println(user.getUsername());
-        if (true/*loggedIn.equals(user)*/) {
+        if (loggedIn.equal(user)) {
             userRepository.delete(user);
             user.setPassword(newPassword);
             User newUser = userRepository.save(user);
@@ -75,5 +78,10 @@ public class UserServiceImplementation implements UserService {
     }
     public User getLogged(){
         return loggedIn;
+    }
+
+    private boolean exists(User user){
+        List<User> users = userRepository.findByUsername(user.getUsername());
+        return !users.isEmpty();
     }
 }

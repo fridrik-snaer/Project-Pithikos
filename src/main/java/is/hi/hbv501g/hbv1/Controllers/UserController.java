@@ -6,9 +6,12 @@ import is.hi.hbv501g.hbv1.Services.Implementations.UserServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 @RestController
 public class UserController {
@@ -35,10 +38,16 @@ public class UserController {
     //curl -X POST -H "Content-Type: application/json" -d '{"username":"Fridrik","password":"lykilord","email":"fsb@gmail.com"}' localhost:8080/createAccount
     //inn og það virkar
     @CrossOrigin
-    @PostMapping(value="/createAccount",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void createAccount(@RequestBody User user){
-        User user_use = new User(user.getUsername(),user.getPassword(), user.getEmail());
-        userServiceImplementation.create(user_use);
+    @RequestMapping (value="/createAccount",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> createAccount(@RequestBody User user){
+        User user_new = new User(user.getUsername(),user.getPassword(), user.getEmail());
+        User user1 = userServiceImplementation.create(user_new);
+        if(isNull(user1)){
+            //Spurning hvort við viljum skila einhverju
+            System.out.println("Reynt að gera user sem er núþegar til");
+            return ResponseEntity.unprocessableEntity().body(null);
+        }
+        return ResponseEntity.created().body(user);
     }
 
     @CrossOrigin

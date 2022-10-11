@@ -36,7 +36,7 @@ public class User {
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    public boolean equals(User user) {
+    public boolean equal(User user) {
         if (this.Id== user.Id){
             return true;
         }
