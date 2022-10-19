@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LessonRepository extends JpaRepository<Lesson,Long> {
-    Lesson findByLvlAndAndLang(int lvl, Lang lang);
+//    Lesson findByLvlAndAndLang(int lvl, Lang lang);
     List<Lesson> findAll();
     Lesson save(Lesson lesson);
 }

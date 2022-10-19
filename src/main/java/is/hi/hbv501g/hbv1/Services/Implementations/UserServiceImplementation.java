@@ -7,6 +7,7 @@ import is.hi.hbv501g.hbv1.Persistence.Repositories.UserRepository;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.util.List;
 
@@ -28,7 +29,17 @@ public class UserServiceImplementation implements UserService {
         if (exists(user)){
             return null;
         }
-        return userRepository.save(user);
+
+        String unhashedPassword = user.getPassword();
+        String bcryptHashString = BCrypt.withDefaults().hashToString(12, unhashedPassword.toCharArray());
+        System.out.println(bcryptHashString);
+        // $2a$12$US00g/uMhoSBm.HiuieBjeMtoN69SN.GE25fCpldebzkryUyopws6
+        BCrypt.Result result = BCrypt.verifyer().verify(unhashedPassword.toCharArray(), bcryptHashString);
+        System.out.println(result);
+
+        User newUser = new User(user.getUsername(), bcryptHashString, user.getEmail());
+        
+        return userRepository.save(newUser);
     }
 
     @Override
@@ -67,9 +78,19 @@ public class UserServiceImplementation implements UserService {
     public User findByID(int id) {
         return userRepository.findById(id);
     }
-    public User login(User user){
-        loggedIn = user;
-        return user;
+    public String login(User user){
+        User dbUser = userRepository.findByEmail(user.getEmail());
+        System.out.print("User" + user);
+        System.out.print("dbUser" + dbUser);
+        if(dbUser == null) return "Notandi er ekki til";
+
+        //Compare password of dbUser and user
+        BCrypt.Result result = BCrypt.verifyer().verify(user.getPassword().toCharArray(), dbUser.getPassword());
+
+        //TODO: Generate-a token til að senda á framenda sem confirm-ar að notandi er loggaður inn
+        System.out.println(result);
+        if(result.verified) return "Tókst að logga inn!";
+        else return "Tókst ekki að logga inn ;(";
     }
     public User logout(){
         User previous = loggedIn;
@@ -81,7 +102,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     private boolean exists(User user){
-        List<User> users = userRepository.findByUsername(user.getUsername());
-        return !users.isEmpty();
+        User dbUser = userRepository.findByUsername(user.getUsername());
+        return dbUser == null;
     }
 }
