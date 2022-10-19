@@ -2,6 +2,7 @@ package is.hi.hbv501g.hbv1.Controllers;
 
 import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.QuoteAttempt;
+import is.hi.hbv501g.hbv1.Persistence.Entities.RandomAttempt;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
 import is.hi.hbv501g.hbv1.Services.StatisticsService;
 import is.hi.hbv501g.hbv1.Services.TypingService;
@@ -39,6 +40,12 @@ public class StatisticsController {
         quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
         quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
         statisticsService.addQuoteAttempt(quoteAttempt);
+    }
+    @CrossOrigin
+    @RequestMapping (value="/addRandomAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void addRandomAttempt(@RequestBody RandomAttempt randomAttempt){
+        randomAttempt.setUser(userService.findById(randomAttempt.getUser().getId()));
+        statisticsService.addRandomAttempt(randomAttempt);
     }
 
     @CrossOrigin
