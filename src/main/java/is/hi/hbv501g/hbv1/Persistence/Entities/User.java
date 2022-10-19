@@ -10,7 +10,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     private String username;
     private String password;
     private String email;
@@ -34,6 +34,10 @@ public class User {
         return "User: "+ this.username + "\nPassword: " + this.password + "\nEmail: " +this.email;
     }
 
+    public User(long id) {
+        this.id = id;
+    }
+
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
@@ -42,7 +46,7 @@ public class User {
     }
 
     public boolean equal(User user) {
-        if (this.Id== user.Id){
+        if (this.id == user.id){
             return true;
         }
         return false;
@@ -55,6 +59,11 @@ public class User {
 
     //</editor-fold>
     //<editor-fold desc="Getters & Setters">
+
+
+    public long getId() {
+        return id;
+    }
 
     public String getUsername() {
         return username;

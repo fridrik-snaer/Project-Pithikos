@@ -67,6 +67,6 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public Quote getQuoteById(long quote_id) {
-        return quoteRepository.findByID(quote_id);
+        return quoteRepository.findById(quote_id);
     }
 }

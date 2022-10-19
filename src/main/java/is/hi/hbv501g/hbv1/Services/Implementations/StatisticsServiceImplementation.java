@@ -47,7 +47,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
-        Quote quote = quoteRepository.findByID(quote_id);
+        Quote quote = quoteRepository.findById(quote_id);
         List<QuoteAttempt> qa = quoteAttemptRepository.findByQuote(quote);
         //TODO útfæra þetta betur
         qa.sort(QuoteAttempt::compareTo);

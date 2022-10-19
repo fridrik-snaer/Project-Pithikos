@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping(value="/login")
     public void login(){
         //Tímabundin prófun
-        User user = userServiceImplementation.findByID(1);
+        User user = userServiceImplementation.findById(1);
         System.out.println("UserController user: " + user);
         userServiceImplementation.login(user);
     }

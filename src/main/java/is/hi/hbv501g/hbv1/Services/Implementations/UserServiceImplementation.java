@@ -11,6 +11,8 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class UserServiceImplementation implements UserService {
     private User loggedIn;
@@ -48,9 +50,9 @@ public class UserServiceImplementation implements UserService {
     }
     //TODO græja equals
     @Override
-    public User changePassword(int user_id, String newPassword) {
+    public User changePassword(long user_id, String newPassword) {
         System.out.println(user_id);
-        User user = this.findByID(user_id);
+        User user = this.findById(user_id);
         System.out.println(loggedIn.getUsername());
         System.out.println(user.getUsername());
         if (loggedIn.equal(user)) {
@@ -75,7 +77,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public User findByID(int id) {
+    public User findById(long id) {
         return userRepository.findById(id);
     }
     public String login(User user){
@@ -103,6 +105,6 @@ public class UserServiceImplementation implements UserService {
 
     private boolean exists(User user){
         User dbUser = userRepository.findByUsername(user.getUsername());
-        return dbUser == null;
+        return !isNull(dbUser);
     }
 }

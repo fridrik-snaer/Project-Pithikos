@@ -10,7 +10,7 @@ import java.util.List;
 public class Quote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
+    private long id;
     private String text;
     private Lang language;
     private String origin; // Author & Reference
@@ -32,7 +32,16 @@ public class Quote {
         this.daily = daily;
     }
 
+    public Quote(long ID) {
+        this.id = ID;
+    }
+
     //<editor-fold desc="Getters & Setters>
+
+    public long getId() {
+        return id;
+    }
+
     public String getText() {
         return text;
     }

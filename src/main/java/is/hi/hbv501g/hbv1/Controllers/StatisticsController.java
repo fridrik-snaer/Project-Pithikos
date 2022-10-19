@@ -32,11 +32,32 @@ public class StatisticsController {
         System.out.println(quote_id);
         return statisticsService.getLeaderboardForQuote(quote_id);
     }
+
+    @CrossOrigin
+    @RequestMapping (value="/addQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void addQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
+        quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
+        quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
+        statisticsService.addQuoteAttempt(quoteAttempt);
+    }
+
+    @CrossOrigin
+    @RequestMapping (value="/addQuoteAttempts", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void addQuoteAttempts(@RequestBody List<QuoteAttempt> quoteAttempts){
+        for (QuoteAttempt quoteAttempt: quoteAttempts) {
+            quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
+            quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
+        }
+        statisticsService.addQuoteAttempts(quoteAttempts);
+    }
+
+
+
     //TODO eyða þessari aðferð
     @CrossOrigin
     @RequestMapping (value="/addAttempts")
     public void addAttempts(){
-        User user = userService.findByID(1);
+        User user = userService.findById(1);
         Quote quote = typingService.getQuoteById(2);
         for (int i = 0; i < 20; i++) {
             QuoteAttempt quoteAttempt = new QuoteAttempt(user,quote,new Timestamp(Clock.systemUTC().millis()),new Timestamp(Clock.systemUTC().millis()+1000*i),100,100-i,true,false,true);

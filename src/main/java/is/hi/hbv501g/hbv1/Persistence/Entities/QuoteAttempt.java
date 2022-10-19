@@ -38,6 +38,16 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
         this.canpost = canpost;
     }
 
+    public QuoteAttempt(Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
+        this.time_start = time_start;
+        this.time_finish = time_finish;
+        this.keystrokes = keystrokes;
+        this.correct = correct;
+        this.completed = completed;
+        this.daily = daily;
+        this.canpost = canpost;
+    }
+
     @Override
     public int compareTo(QuoteAttempt o) {
         long this_time = this.time_finish.getTime()-this.time_start.getTime();
@@ -54,6 +64,14 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Quote getQuote() {
+        return quote;
+    }
+
+    public void setQuote(Quote quote) {
+        this.quote = quote;
     }
 
     public Timestamp getTime_start() {
