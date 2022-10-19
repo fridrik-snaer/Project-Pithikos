@@ -47,7 +47,7 @@ public class UserController {
             System.out.println("Reynt að gera user sem er núþegar til");
             return ResponseEntity.unprocessableEntity().body(null);
         }
-        return ResponseEntity.created().body(user);
+        return ResponseEntity.ok().body(user);
     }
 
     @CrossOrigin

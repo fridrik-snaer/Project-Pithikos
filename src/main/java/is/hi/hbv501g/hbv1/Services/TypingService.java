@@ -18,4 +18,5 @@ public interface TypingService {
     Quote getDailyChallenge(Lang lang);
     Quote getUnacceptedQuote(Lang lang);
     Quote submitQuote(Quote quote);
+    Quote getQuoteById(long quote_id);
 }

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "quoteAttempts")
-public class QuoteAttempt /*extends Attempt*/ {
+public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
@@ -26,8 +26,9 @@ public class QuoteAttempt /*extends Attempt*/ {
     public QuoteAttempt() {
     }
 
-    public QuoteAttempt(User user, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
+    public QuoteAttempt(User user, Quote quote, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
         this.user = user;
+        this.quote = quote;
         this.time_start = time_start;
         this.time_finish = time_finish;
         this.keystrokes = keystrokes;
@@ -36,6 +37,16 @@ public class QuoteAttempt /*extends Attempt*/ {
         this.daily = daily;
         this.canpost = canpost;
     }
+
+    @Override
+    public int compareTo(QuoteAttempt o) {
+        long this_time = this.time_finish.getTime()-this.time_start.getTime();
+        long u_time = o.time_finish.getTime()-o.time_start.getTime();
+        if (this_time<u_time) {return -1;}
+        else if (this_time>u_time) {return 1;}
+        else {return 0;}
+    }
+
     //<editor-fold desc="Getters & Setters">
     public User getUser() {
         return user;

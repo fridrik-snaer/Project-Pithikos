@@ -64,4 +64,9 @@ public class TypingServiceImplementation implements TypingService {
     public Quote submitQuote(Quote quote) {
         return null;
     }
+
+    @Override
+    public Quote getQuoteById(long quote_id) {
+        return quoteRepository.findByID(quote_id);
+    }
 }

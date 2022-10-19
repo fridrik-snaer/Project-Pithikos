@@ -3,11 +3,13 @@ package is.hi.hbv501g.hbv1.Controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Lang;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
+import is.hi.hbv501g.hbv1.Persistence.Entities.User;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
 import is.hi.hbv501g.hbv1.Services.TypingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jackson.JsonObjectSerializer;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @RestController
 public class TypingController {
