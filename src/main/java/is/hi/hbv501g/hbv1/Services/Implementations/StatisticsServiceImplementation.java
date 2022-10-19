@@ -55,6 +55,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         int retLength = Math.max(LeaderboardLength,qa.size());
         for (int i = 0; i < retLength; i++) {
             System.out.println("Bætt við");
+            qa.get(i).getUser().clear();
             ret.add(qa.get(i));
         }
         return ret;

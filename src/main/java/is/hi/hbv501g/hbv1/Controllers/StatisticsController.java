@@ -30,20 +30,30 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping(value="/getLeaderboardForQuote/{quote_id}",method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<QuoteAttempt> getLeaderboardForQuote(@PathVariable long quote_id){
+        //Tilraunastarfsemi
         System.out.println(quote_id);
-        return statisticsService.getLeaderboardForQuote(quote_id);
+        List<QuoteAttempt> attempts  = statisticsService.getLeaderboardForQuote(quote_id);
+        for (QuoteAttempt attempt: attempts) {
+            System.out.println(attempt);
+        }
+        return attempts;
     }
 
     @CrossOrigin
     @RequestMapping (value="/addQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void addQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
+        //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
+        //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
         quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
+        //Bara beint kall síðan
         statisticsService.addQuoteAttempt(quoteAttempt);
     }
     @CrossOrigin
     @RequestMapping (value="/addRandomAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void addRandomAttempt(@RequestBody RandomAttempt randomAttempt){
+        //Fáum notenda sem hefur bara id og notum það til að sækja alla upplýsingar
+        //Svo það þurfi ekki allar upplýsingar um user að fara á milli bak- og framenda
         randomAttempt.setUser(userService.findById(randomAttempt.getUser().getId()));
         statisticsService.addRandomAttempt(randomAttempt);
     }
@@ -51,6 +61,8 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping (value="/addQuoteAttempts", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void addQuoteAttempts(@RequestBody List<QuoteAttempt> quoteAttempts){
+        //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
+        //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         for (QuoteAttempt quoteAttempt: quoteAttempts) {
             quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
             quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
@@ -61,6 +73,7 @@ public class StatisticsController {
 
 
     //TODO eyða þessari aðferð
+    //Hún er til að búa til dummy gögn til prófana
     @CrossOrigin
     @RequestMapping (value="/addAttempts")
     public void addAttempts(){

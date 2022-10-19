@@ -29,12 +29,17 @@ public class TypingController {
     public TypingController(TypingService typingService) {
         this.typingService = typingService;
     }
+    //Þessi aðferð var notuð í tilraunastarfsemi
+    //Skilar öllum orðum í gagnagrunni og er því ekki sniðug vegna þess að nú eru þau rúmlega 100.000
     @CrossOrigin
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Word> getAllWords() {
-        List<Word> words = typingService.getAllWords();
-        return words;
+        //List<Word> words = typingService.getAllWords();
+        //return words;
+        return null;
     }
+    //Þessi aðferð er í raun ekkert notuð og mætti líklega eyða
+    //Skilar öllum orðum af ákveðnu tungumáli
     @CrossOrigin
     @RequestMapping(value="/words/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Word> getAllWordsOfLanguage(@PathVariable String lang) {
@@ -42,6 +47,8 @@ public class TypingController {
         List<Word> words = typingService.getRandomWordsByLanguage(language);
         return words;
     }
+    //Skilar öllum orðum af tungumáli lang sem hafa rank minna en það sem gefið er
+    //Notuð af aðalleiknum í random stillingu
     @CrossOrigin
     @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
@@ -50,18 +57,13 @@ public class TypingController {
         List<Word> words = typingService.getRandomWords(language,ranking);
         return words;
     }
-
+    //Skilar öllum quotes af ákveðnu tungumáli (lang)
+    //Notað af aðalleiknum í quotes stillingu
     @CrossOrigin
     @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
         Lang language = Lang.valueOf(lang);
         List<Quote> quotes = typingService.getQuotes(language);
         return quotes;
-    }
-
-    @RequestMapping(value="/", method = RequestMethod.POST)
-    public String indexPOST() {
-        System.out.println("Hello World");
-        return "";
     }
 }

@@ -9,7 +9,7 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private Quote quote;
@@ -46,6 +46,11 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
         this.completed = completed;
         this.daily = daily;
         this.canpost = canpost;
+    }
+
+    @Override
+    public String toString() {
+        return "This quote attempt started at " + time_start.toString() + " ended at " + time_finish.toString() + " had " + keystrokes + " keystrokes and " + correct + " were correct";
     }
 
     @Override

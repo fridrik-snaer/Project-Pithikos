@@ -21,31 +21,25 @@ public class UserController {
     public UserController(UserServiceImplementation userServiceImplementation) {
         this.userServiceImplementation = userServiceImplementation;
     }
-    @CrossOrigin
-    @GetMapping(value="/login")
-    public void login(){
-        //Tímabundin prófun
-        User user = userServiceImplementation.findById(1);
-        System.out.println("UserController user: " + user);
-        userServiceImplementation.login(user);
-    }
-
+    //Loggar in notenda sem hefur notendanafn og lykilorð
+    //Ekki búið að útfæra almennilega, bíður eftir lykilorðabrasi
+    //Erum svo öruggir
     @CrossOrigin
     @PostMapping(value="/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String login(@RequestBody User user){
         String token = userServiceImplementation.login(user);
         return token;
     }
-
+    //Notað til að sækja userinn sem er loggað inn
+    //Skilar User hlur sem samsvarar þeim sem er loggaður inn
+    //Ef enginn þá er skilað null
     @CrossOrigin
     @RequestMapping(value="/getLogged", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public User getLogged(){
         return userServiceImplementation.getLogged();
     }
-
-    //Hér er hægt að setja skipunina:
-    //curl -X POST -H "Content-Type: application/json" -d '{"username":"Fridrik","password":"lykilord","email":"fsb@gmail.com"}' localhost:8080/createAccount
-    //inn og það virkar
+    //Býr til nýjan account með username,password og email
+    //Ef aðgangur er núþegar til er skilað https villu
     @CrossOrigin
     @RequestMapping (value="/createAccount",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createAccount(@RequestBody User user){
@@ -58,7 +52,8 @@ public class UserController {
         }
         return ResponseEntity.ok().body(user);
     }
-
+    //Til að breyta lykilorðum
+    //Á enn eftir að útfæra örlítið vegna lykilorðabras
     @CrossOrigin
     @PostMapping(value="/changePassword",consumes = MediaType.APPLICATION_JSON_VALUE)
     public void changePassword(@RequestBody Map<String, String> json){

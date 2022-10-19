@@ -51,6 +51,13 @@ public class User {
         }
         return false;
     }
+    public void clear(){
+        setStats(null);
+        setQuoteAttempts(null);
+        setRandomAttempts(null);
+        setRecieverRelationships(null);
+        setSenderRelationships(null);
+    }
 
     //<editor-fold desc="Functions">
     //TODO: decide which functions User class should have and implement them
