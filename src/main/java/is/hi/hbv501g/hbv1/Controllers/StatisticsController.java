@@ -70,6 +70,19 @@ public class StatisticsController {
         statisticsService.addQuoteAttempts(quoteAttempts);
     }
 
+    @CrossOrigin
+    @RequestMapping (value="/getSpeedPercentileForQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int getSpeedPercentileForQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
+        long quoteAttempt_id = quoteAttempt.getId();
+        return statisticsService.getSpeedPercentileForQuoteAttempt(quoteAttempt_id);
+    }
+
+    @CrossOrigin
+    @RequestMapping (value="/getAccuracyPercentileForQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int getAccuracyPercentileForQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
+        long quoteAttempt_id = quoteAttempt.getId();
+        return statisticsService.getAccuracyPercentileForQuoteAttempt(quoteAttempt_id);
+    }
 
 
     //TODO eyða þessari aðferð
@@ -80,7 +93,7 @@ public class StatisticsController {
         User user = userService.findById(1);
         Quote quote = typingService.getQuoteById(2);
         for (int i = 0; i < 20; i++) {
-            QuoteAttempt quoteAttempt = new QuoteAttempt(user,quote,new Timestamp(Clock.systemUTC().millis()),new Timestamp(Clock.systemUTC().millis()+1000*i),100,100-i,true,false,true);
+            QuoteAttempt quoteAttempt = new QuoteAttempt(user,quote,new Timestamp(Clock.systemUTC().millis()),new Timestamp(Clock.systemUTC().millis()+1000*(i+1)),100,100-i,true,false,true);
             statisticsService.addQuoteAttempt(quoteAttempt);
         }
     }

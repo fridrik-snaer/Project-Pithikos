@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
+    private long id;
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,6 +63,11 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
     }
 
     //<editor-fold desc="Getters & Setters">
+
+    public long getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }

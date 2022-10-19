@@ -9,9 +9,10 @@ public interface StatisticsService {
     void addQuoteAttempt(QuoteAttempt quoteAttempt);
     void addQuoteAttempts(List<QuoteAttempt> quoteAttempts);
     List<QuoteAttempt> getLeaderboardForQuote(long quote_id);
-    int getSpeedPercentileForQuoteAttempt(QuoteAttempt quoteAttempt);
-    int getAccuracyPercentileForQuoteAttempt(QuoteAttempt quoteAttempt);
+    int getSpeedPercentileForQuoteAttempt(long quoteAttempt_id);
+    int getAccuracyPercentileForQuoteAttempt(long quoteAttempt_id);
     Stats getStatisticsOfUser(User user);
-    Stats updateStatsOfUser(User user);
+    Stats updateStatsOfUser(User user,QuoteAttempt quoteAttempt);
+    Stats updateStatsOfUser(User user,RandomAttempt randomAttempt);
     List<Stats> getAllStats();
 }
