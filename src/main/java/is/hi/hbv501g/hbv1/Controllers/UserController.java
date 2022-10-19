@@ -25,9 +25,18 @@ public class UserController {
     @GetMapping(value="/login")
     public void login(){
         //Tímabundin prófun
-        User user = userServiceImplementation.findByID(4);
+        User user = userServiceImplementation.findByID(1);
+        System.out.println("UserController user: " + user);
         userServiceImplementation.login(user);
     }
+
+    @CrossOrigin
+    @PostMapping(value="/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String login(@RequestBody User user){
+        String token = userServiceImplementation.login(user);
+        return token;
+    }
+
     @CrossOrigin
     @RequestMapping(value="/getLogged", method= RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     public User getLogged(){
@@ -47,7 +56,7 @@ public class UserController {
             System.out.println("Reynt að gera user sem er núþegar til");
             return ResponseEntity.unprocessableEntity().body(null);
         }
-        return ResponseEntity.created().body(user);
+        return ResponseEntity.ok().body(user);
     }
 
     @CrossOrigin
