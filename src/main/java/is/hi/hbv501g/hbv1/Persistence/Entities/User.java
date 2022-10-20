@@ -1,11 +1,17 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -26,8 +32,24 @@ public class User {
     @OneToMany(mappedBy = "reciever", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Relationship> recieverRelationships = new ArrayList<>();
 
-    public User() {
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -42,14 +64,12 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.roles = new ArrayList<>();
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
     public boolean equal(User user) {
-        if (this.id == user.id){
-            return true;
-        }
-        return false;
+        return this.id == user.id;
     }
     public void clear(){
         setStats(null);
