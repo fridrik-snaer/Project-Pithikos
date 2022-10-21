@@ -28,6 +28,7 @@ import static java.util.Objects.isNull;
 public class UserServiceImplementation implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
     private final RelationshipRepository relationshipRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -36,6 +37,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         log.info("Saved new user {} to the database", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    @Override
+    public User getUser(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Override

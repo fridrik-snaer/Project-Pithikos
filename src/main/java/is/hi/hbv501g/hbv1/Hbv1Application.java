@@ -15,8 +15,8 @@ public class Hbv1Application {
     public static void main(String[] args) {
         SpringApplication.run(Hbv1Application.class, args);
     }
-//    @Bean
-//    PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
+    @Bean
+    PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
 //
 //    @Bean
 //    CommandLineRunner run(UserService userService){

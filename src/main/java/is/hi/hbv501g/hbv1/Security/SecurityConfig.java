@@ -1,6 +1,6 @@
 package is.hi.hbv501g.hbv1.Security;
 
-import is.hi.hbv501g.hbv1.Security.Filters.CustomAuthenticationFilter;
+import is.hi.hbv501g.hbv1.Security.Filters.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,40 +12,56 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import static org.springframework.http.HttpMethod.GET;
 
+/**
+ * Configures security of routing by intercepting all http requests and inserting Middleware that
+ * Restricts and cleans up http requests
+ */
 @Configuration @EnableWebSecurity @RequiredArgsConstructor
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is deprecated but so are you opinions
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    /**
+     * Provide the userDetailsService with the passwordEncoder used for password encryption
+     * @param auth
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
     }
 
+    /**
+     * Configure http request security such as csrf and providing middleware responsible for restricting access to api
+     * according to role of user
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        //TODO: VELJA NON-VERIFIED ENDPOINTS
         http.authorizeRequests()
-            .antMatchers( //TODO: VELJA NON-VERIFIED ENDPOINTS
-                    "/api/words/**",
-                    "/api/quotes/**",
-                    "/api/login/**",
-                    "/api/token/refresh/**")
+            .antMatchers("/", "/api/words/**", "/api/quotes/**", "/api/login/**", "/api/token/refresh/**")
             .permitAll();
 
+        //TODO: VELJA USER ENDPOINT
         http.authorizeRequests()
-            .antMatchers(GET, //TODO: VELJA USER ENDPOINT
-                    "/api/user/**",
-                    "/api/users/**")
+            .antMatchers(GET, "/api/user/**", "/api/users/**")
             .hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests()
-            .antMatchers() //TODO: VELJA ADMIN ONLY ENDPOINT
-            .hasAnyAuthority("ROLE_ADMIN");
-        http.authorizeRequests().anyRequest().authenticated();
+
+//        //TODO: VELJA ADMIN ONLY ENDPOINT
+//        http.authorizeRequests()
+//            .antMatchers()
+//            .hasAnyAuthority("ROLE_ADMIN");
+//        http.authorizeRequests().anyRequest().authenticated();
 
         //Middleware authorization / authentication
 
@@ -56,7 +72,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
        http.addFilter(customAuthenticationFilter);
+       http.addFilterAfter(new CharsetRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+       http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
+    /**
+     * Magic Bean
+     * @return A beanstalk leading to the Giants Castle, the home of the golden goose!
+     * @throws Exception
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

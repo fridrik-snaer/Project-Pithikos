@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 @RestController
 public class TypingController {
     private final TypingService typingService;
@@ -26,9 +29,9 @@ public class TypingController {
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Greeting getIndex() {
         //TODO: Bæta við öllum endpoints
-        Endpoint endpoint = new Endpoint("/login/api", "http", List.of("POST"));
-        Greeting greeting = new Greeting("Welcome to the api!", List.of(endpoint));
-        return greeting;
+        Endpoint endpoint = new Endpoint("/api/login", "http", List.of("POST"));
+        Endpoint wordendpoint = new Endpoint("/api/words/{lang}/{rank}", "http", List.of("POST"));
+        return new Greeting("Welcome to the api!", List.of(wordendpoint,endpoint));
     }
 
     /**
@@ -39,12 +42,9 @@ public class TypingController {
      * the specified rank
      */
     @CrossOrigin
-    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
-        int ranking  = Integer.parseInt(rank);
-        Lang language = Lang.valueOf(lang);
-        List<Word> words = typingService.getRandomWords(language,ranking);
-        return words;
+        return typingService.getRandomWords(Lang.valueOf(lang),Integer.parseInt(rank));
     }
 
     /**
@@ -55,9 +55,7 @@ public class TypingController {
     @CrossOrigin
     @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
-        Lang language = Lang.valueOf(lang);
-        List<Quote> quotes = typingService.getQuotes(language);
-        return quotes;
+        return typingService.getQuotes(Lang.valueOf(lang));
     }
 
     //Temporary classes used for enpoint displaying
