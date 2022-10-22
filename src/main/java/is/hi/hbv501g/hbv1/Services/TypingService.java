@@ -10,10 +10,13 @@ import java.util.List;
 
 @Service
 public interface TypingService {
-    List<Word> getRandomWords();
+    List<Word> getRandomWords(Lang lang, int rank);
+    List<Word> getAllWords();
+    List<Word> getRandomWordsByLanguage(Lang lang);
     List<Quote> getQuotes(Lang lang);
     List<Lesson> getLessons(int lvl, Lang lang);
     Quote getDailyChallenge(Lang lang);
     Quote getUnacceptedQuote(Lang lang);
     Quote submitQuote(Quote quote);
+    Quote getQuoteById(long quote_id);
 }

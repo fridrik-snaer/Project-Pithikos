@@ -1,8 +1,17 @@
 package is.hi.hbv501g.hbv1;
 
+import is.hi.hbv501g.hbv1.Services.UserService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @SpringBootApplication
 public class Hbv1Application {
@@ -11,5 +20,25 @@ public class Hbv1Application {
     public static void main(String[] args) {
         SpringApplication.run(Hbv1Application.class, args);
     }
-
+    @Bean
+    PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
+//
+//    @Bean
+//    CommandLineRunner run(UserService userService){
+//        return (args) -> {
+//        };
+//    }
+     @Bean
+     CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(Arrays.asList("X-Get-Header"));
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

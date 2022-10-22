@@ -11,6 +11,9 @@ Haustönn Háskóla Íslands 2022
 ## Til að keyra með framenda:
 Keyra þetta repository í intellij (ætti að keyra á http://localhost:8080)
 
+Vera með postgres hlaðið niður
+Fara í möppuna .../src/main/resources í terminal og 
+
 Hlaða niður frontend repository og vera með npm á terminal
 Keyra npm install til öryggis
 Keyra npm start til að keyra

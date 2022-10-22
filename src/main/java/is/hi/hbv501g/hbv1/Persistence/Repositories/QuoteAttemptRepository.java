@@ -10,5 +10,7 @@ import java.util.List;
 public interface QuoteAttemptRepository extends JpaRepository<QuoteAttempt, Long> {
     List<QuoteAttempt> findByUser(User user);
     List<QuoteAttempt> findByQuote(Quote quote);
+    QuoteAttempt findById(long id);
+    int countAllByUser(User user);
     QuoteAttempt save(QuoteAttempt quoteAttempt);
 }

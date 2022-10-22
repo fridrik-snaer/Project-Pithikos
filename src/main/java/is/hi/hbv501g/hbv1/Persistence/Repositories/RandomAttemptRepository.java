@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface RandomAttemptRepository extends JpaRepository<RandomAttempt,Long> {
     List<RandomAttempt> findByUser(User user);
+    int countAllByUser(User user);
     RandomAttempt save(RandomAttempt randomAttempt);
 }

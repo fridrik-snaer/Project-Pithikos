@@ -1,22 +1,28 @@
 package is.hi.hbv501g.hbv1.Persistence.Entities;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
+@Data
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     private String username;
     private String password;
     private String email;
     private Timestamp createdAt;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Stats stats;
+    private Stats stats = new Stats();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuoteAttempt> quoteAttempts = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -26,15 +32,51 @@ public class User {
     @OneToMany(mappedBy = "reciever", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Relationship> recieverRelationships = new ArrayList<>();
 
-    public User() {
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Collection<Role> roles = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "User: "+ this.username + "\nPassword: " + this.password + "\nEmail: " +this.email;
+    }
+
+    public User(long id) {
+        this.id = id;
     }
 
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.stats = new Stats();
+        this.roles = new ArrayList<>();
         this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
+
+    public boolean equal(User user) {
+        return this.id == user.id;
+    }
+    public void clear(){
+        setStats(null);
+        setQuoteAttempts(null);
+        setRandomAttempts(null);
+        setRecieverRelationships(null);
+        setSenderRelationships(null);
     }
 
     //<editor-fold desc="Functions">
@@ -44,6 +86,11 @@ public class User {
 
     //</editor-fold>
     //<editor-fold desc="Getters & Setters">
+
+
+    public long getId() {
+        return id;
+    }
 
     public String getUsername() {
         return username;

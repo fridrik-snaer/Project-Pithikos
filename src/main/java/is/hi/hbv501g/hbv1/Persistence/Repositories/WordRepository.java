@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface WordRepository extends JpaRepository<Word,Long> {
     List<Word> findAll();
+    List<Word> findAllByLanguage(Lang lang);
+    List<Word> findAllByLanguageAndAndRankLessThanEqual(Lang lang,int rank);
     Word findByRankAndLanguage(int rank, Lang lang);
     Word findById(long id);
     Word save(Word word);

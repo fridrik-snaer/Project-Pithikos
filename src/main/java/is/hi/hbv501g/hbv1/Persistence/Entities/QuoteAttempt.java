@@ -5,11 +5,11 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "quoteAttempts")
-public class QuoteAttempt /*extends Attempt*/ {
+public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
-    @ManyToOne(fetch = FetchType.LAZY)
+    private long id;
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @ManyToOne(fetch = FetchType.LAZY)
     private Quote quote;
@@ -26,8 +26,9 @@ public class QuoteAttempt /*extends Attempt*/ {
     public QuoteAttempt() {
     }
 
-    public QuoteAttempt(User user, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
+    public QuoteAttempt(User user, Quote quote, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
         this.user = user;
+        this.quote = quote;
         this.time_start = time_start;
         this.time_finish = time_finish;
         this.keystrokes = keystrokes;
@@ -36,13 +37,51 @@ public class QuoteAttempt /*extends Attempt*/ {
         this.daily = daily;
         this.canpost = canpost;
     }
+
+    public QuoteAttempt(Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, boolean daily, boolean canpost) {
+        this.time_start = time_start;
+        this.time_finish = time_finish;
+        this.keystrokes = keystrokes;
+        this.correct = correct;
+        this.completed = completed;
+        this.daily = daily;
+        this.canpost = canpost;
+    }
+
+    @Override
+    public String toString() {
+        return "This quote attempt started at " + time_start.toString() + " ended at " + time_finish.toString() + " had " + keystrokes + " keystrokes and " + correct + " were correct";
+    }
+
+    @Override
+    public int compareTo(QuoteAttempt o) {
+        long this_time = this.time_finish.getTime()-this.time_start.getTime();
+        long u_time = o.time_finish.getTime()-o.time_start.getTime();
+        if (this_time<u_time) {return -1;}
+        else if (this_time>u_time) {return 1;}
+        else {return 0;}
+    }
+
     //<editor-fold desc="Getters & Setters">
+
+    public long getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Quote getQuote() {
+        return quote;
+    }
+
+    public void setQuote(Quote quote) {
+        this.quote = quote;
     }
 
     public Timestamp getTime_start() {
