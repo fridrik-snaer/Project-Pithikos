@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -43,8 +43,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
      */
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username, password;
+        try {
+            Map<String, String> requestMap = new ObjectMapper().readValue(request.getInputStream(), Map.class);
+            username = requestMap.get("username");
+            password = requestMap.get("password");
+            log.info(username, password);
+        } catch (IOException e){
+            throw new AuthenticationServiceException(e.getMessage(), e);
+        }
         log.info("Username is {}", username); log.info("Password is {}", password);
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
@@ -66,9 +73,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal(); // ATH ekki sami user og í persitance.entities
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes()); //TODO: refactora secret
         //Hversu lengi endist acccess
-        Long accessExpirationTimeInMillis = (long)(10*60*1000); //10 min
+        long accessExpirationTimeInMillis = (10*60*1000); //10 min
         //Hversu lengi endist refresh
-        Long refreshExpirationTimeInMillis = (long)(12*60*60*1000); //12 hours
+        long refreshExpirationTimeInMillis = (12*60*60*1000); //12 hours
 
         //Create jwt accessToken
         String accessToken = JWT.create()
@@ -88,7 +95,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        response.setContentType(APPLICATION_JSON_UTF8_VALUE);
+        response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

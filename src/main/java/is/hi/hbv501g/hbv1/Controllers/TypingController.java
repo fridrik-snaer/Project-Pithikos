@@ -5,6 +5,7 @@ import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
 import is.hi.hbv501g.hbv1.Services.TypingService;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController @Slf4j
 public class TypingController {
     private final TypingService typingService;
     @Autowired
@@ -29,6 +30,7 @@ public class TypingController {
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Greeting getIndex() {
         //TODO: Bæta við öllum endpoints
+        log.info("User just submitted");
         Endpoint endpoint = new Endpoint("/api/login", "http", List.of("POST"));
         Endpoint wordendpoint = new Endpoint("/api/words/{lang}/{rank}", "http", List.of("POST"));
         return new Greeting("Welcome to the api!", List.of(wordendpoint,endpoint));
