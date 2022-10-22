@@ -108,24 +108,28 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return statsRepository.findByUser(user);
     }
 
+    //Uppfærir stats á User alltaf þegar bætt er við nýrri tilraun
+    //Fullútfært
     @Override
     public Stats updateStatsOfUser(User user,QuoteAttempt quoteAttempt) {
+        //Uppfærum ekki neitt ef ekki var klárað tilraunina
+        if (!quoteAttempt.isCompleted()){
+            return null;
+        }
+        //Reiknum út tíma tilraunar í mínutum
         float time_in_ms = (quoteAttempt.getTime_finish().getTime()-quoteAttempt.getTime_start().getTime());
-        System.out.println(time_in_ms);
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
-        System.out.println(time);
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
+        //Reiknum wpm á þessari tilraun
         float wpm = (float) (quoteAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
-        System.out.println(wpm);
+        //Reiknum acc á þessari tilraun
         float acc = (float) quoteAttempt.getCorrect()/(float) quoteAttempt.getKeystrokes();
+        //Ef stats eru ekki til þá þarf sértilfælli
         if (isNull(statsRepository.findByUser(user))){
             Stats stats = new Stats(user,wpm,acc,1,quoteAttempt.isCompleted() ? 1 : 0);
             statsRepository.save(stats);
             return stats;
-        }
-        if (!quoteAttempt.isCompleted()){
-            return null;
         }
         Stats stats = statsRepository.findByUser(user);
         //Uppfæra avg_wpm
@@ -138,7 +142,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTests_completed()+acc)/(float)(stats.getTests_completed()+1);
         stats.setAvg_acc(new_avg_acc);
         //Uppfæra completed
-        if (!quoteAttempt.isCompleted()){
+        if (quoteAttempt.isCompleted()){
             stats.setTests_completed(stats.getTests_completed()+1);
         }
         //Uppfæra tests taken
@@ -151,22 +155,19 @@ public class StatisticsServiceImplementation implements StatisticsService {
     }
     @Override
     public Stats updateStatsOfUser(User user,RandomAttempt randomAttempt) {
+        if (!randomAttempt.isCompleted()){
+            return null;
+        }
         float time_in_ms = (randomAttempt.getTime_finish().getTime()-randomAttempt.getTime_start().getTime());
-        System.out.println(time_in_ms);
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
-        System.out.println(time);
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
         float wpm = (float) (randomAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
-        System.out.println(wpm);
         float acc = (float) randomAttempt.getCorrect()/(float) randomAttempt.getKeystrokes();
         if (isNull(statsRepository.findByUser(user))){
             Stats stats = new Stats(user,wpm,acc,1,randomAttempt.isCompleted() ? 1 : 0);
             statsRepository.save(stats);
             return stats;
-        }
-        if (!randomAttempt.isCompleted()){
-            return null;
         }
         Stats stats = statsRepository.findByUser(user);
         //Uppfæra avg_wpm
@@ -193,6 +194,6 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public List<Stats> getAllStats() {
-        return null;
+        return statsRepository.findAll();
     }
 }

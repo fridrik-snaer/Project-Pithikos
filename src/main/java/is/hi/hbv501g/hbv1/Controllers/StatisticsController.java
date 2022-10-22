@@ -1,9 +1,6 @@
 package is.hi.hbv501g.hbv1.Controllers;
 
-import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
-import is.hi.hbv501g.hbv1.Persistence.Entities.QuoteAttempt;
-import is.hi.hbv501g.hbv1.Persistence.Entities.RandomAttempt;
-import is.hi.hbv501g.hbv1.Persistence.Entities.User;
+import is.hi.hbv501g.hbv1.Persistence.Entities.*;
 import is.hi.hbv501g.hbv1.Services.StatisticsService;
 import is.hi.hbv501g.hbv1.Services.TypingService;
 import is.hi.hbv501g.hbv1.Services.UserService;
@@ -82,6 +79,13 @@ public class StatisticsController {
     public int getAccuracyPercentileForQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
         long quoteAttempt_id = quoteAttempt.getId();
         return statisticsService.getAccuracyPercentileForQuoteAttempt(quoteAttempt_id);
+    }
+
+    @CrossOrigin
+    @RequestMapping (value="/getStatisticsOfUser", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public Stats getStatisticsOfUser(@RequestBody User user){
+        userService.findById(user.getId());
+        return statisticsService.getStatisticsOfUser(user);
     }
 
 
