@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
@@ -87,7 +88,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", accessToken);
         tokens.put("refreshToken", refreshToken);
-        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setContentType(APPLICATION_JSON_UTF8_VALUE);
+        response.setCharacterEncoding("UTF-8");
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 }

@@ -10,6 +10,9 @@ import is.hi.hbv501g.hbv1.Services.TypingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +35,13 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public List<Word> getRandomWords(Lang lang, int rank) {
-        return wordRepository.findAllByLanguageAndAndRankLessThanEqual(lang,rank);
+        List<Word> words = wordRepository.findAllByLanguageAndAndRankLessThanEqual(lang,rank);
+        //Þetta ætti ekki að þurfa en What do I know?
+        words.forEach(word -> {
+            String decodedToUTF8 = new String(word.getText().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+            word.setText(decodedToUTF8);
+        });
+        return words;
     }
 
     @Override
