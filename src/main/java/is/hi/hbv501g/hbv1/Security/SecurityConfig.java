@@ -13,9 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Configures security of routing by intercepting all http requests and inserting Middleware that
@@ -45,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+        http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //TODO: VELJA NON-VERIFIED ENDPOINTS
@@ -72,9 +77,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
 
        http.addFilter(customAuthenticationFilter);
-       http.addFilterAfter(new CharsetRequestFilter(), UsernamePasswordAuthenticationFilter.class);
        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
 
     /**
      * Magic Bean
