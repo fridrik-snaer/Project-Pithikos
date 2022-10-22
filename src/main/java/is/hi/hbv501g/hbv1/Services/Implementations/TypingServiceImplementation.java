@@ -41,10 +41,10 @@ public class TypingServiceImplementation implements TypingService {
     public List<Word> getRandomWords(Lang lang, int rank) {
         List<Word> words = wordRepository.findAllByLanguageAndAndRankLessThanEqual(lang,rank);
         //Þetta ætti ekki að þurfa en What do I know?
-        words.forEach(word -> {
-            String decodedToUTF8 = new String(word.getText().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-            word.setText(decodedToUTF8);
-        });
+        //words.forEach(word -> {
+        //    String decodedToUTF8 = new String(word.getText().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        //    word.setText(decodedToUTF8);
+        //});
         return words;
     }
 

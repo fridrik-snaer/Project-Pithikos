@@ -44,7 +44,7 @@ public class TypingController {
      * the specified rank
      */
     @CrossOrigin
-    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
         return typingService.getRandomWords(Lang.valueOf(lang),Integer.parseInt(rank));
     }
@@ -55,13 +55,13 @@ public class TypingController {
      * @return returns all words in specified language
      */
     @CrossOrigin
-    @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
         return typingService.getQuotes(Lang.valueOf(lang));
     }
 
     @CrossOrigin
-    @RequestMapping(value="/getDailyQuote/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/getDailyQuote/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public Quote getDailyChallengeByLanguage(@PathVariable String lang) {
         return typingService.getDailyChallenge(Lang.valueOf(lang));
     }
