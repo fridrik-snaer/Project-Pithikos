@@ -60,6 +60,12 @@ public class TypingController {
         return typingService.getQuotes(Lang.valueOf(lang));
     }
 
+    @CrossOrigin
+    @RequestMapping(value="/getDailyQuote/{lang}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Quote getDailyChallengeByLanguage(@PathVariable String lang) {
+        return typingService.getDailyChallenge(Lang.valueOf(lang));
+    }
+
     //Temporary classes used for enpoint displaying
     //TODO: replace these with a HashMap
     @Data

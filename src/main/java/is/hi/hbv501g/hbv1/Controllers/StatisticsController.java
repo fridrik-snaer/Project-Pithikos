@@ -38,33 +38,33 @@ public class StatisticsController {
 
     @CrossOrigin
     @RequestMapping (value="/addQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
+    public QuoteAttempt addQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
         //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
         //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
         quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
         //Bara beint kall síðan
-        statisticsService.addQuoteAttempt(quoteAttempt);
+        return statisticsService.addQuoteAttempt(quoteAttempt);
     }
     @CrossOrigin
     @RequestMapping (value="/addRandomAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addRandomAttempt(@RequestBody RandomAttempt randomAttempt){
+    public RandomAttempt addRandomAttempt(@RequestBody RandomAttempt randomAttempt){
         //Fáum notenda sem hefur bara id og notum það til að sækja alla upplýsingar
         //Svo það þurfi ekki allar upplýsingar um user að fara á milli bak- og framenda
         randomAttempt.setUser(userService.findById(randomAttempt.getUser().getId()));
-        statisticsService.addRandomAttempt(randomAttempt);
+        return statisticsService.addRandomAttempt(randomAttempt);
     }
 
     @CrossOrigin
     @RequestMapping (value="/addQuoteAttempts", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addQuoteAttempts(@RequestBody List<QuoteAttempt> quoteAttempts){
+    public List<QuoteAttempt> addQuoteAttempts(@RequestBody List<QuoteAttempt> quoteAttempts){
         //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
         //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         for (QuoteAttempt quoteAttempt: quoteAttempts) {
             quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
             quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
         }
-        statisticsService.addQuoteAttempts(quoteAttempts);
+        return statisticsService.addQuoteAttempts(quoteAttempts);
     }
 
     @CrossOrigin

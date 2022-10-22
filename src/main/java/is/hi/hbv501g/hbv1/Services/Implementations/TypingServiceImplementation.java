@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.List;
 public class TypingServiceImplementation implements TypingService {
     private WordRepository wordRepository;
     private QuoteRepository quoteRepository;
+    private final long millisInDay = 86400000L;
+    private final long the_first_day_millis = 1666457121515L;
+    private Timestamp theFirstDay = new Timestamp(the_first_day_millis);
 
     @Autowired
     public TypingServiceImplementation(WordRepository wordRepository,QuoteRepository quoteRepository) {
@@ -61,7 +65,10 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public Quote getDailyChallenge(Lang lang) {
-        return null;
+        long diff = System.currentTimeMillis()-theFirstDay.getTime();
+        long day_diff = diff/millisInDay;
+        List<Quote> dailies = quoteRepository.findAllByDailyTrue();
+        return dailies.get((int)day_diff);
     }
 
     @Override

@@ -32,23 +32,32 @@ public class StatisticsServiceImplementation implements StatisticsService {
     }
 
     @Override
-    public void addRandomAttempt(RandomAttempt randomAttempt) {
+    public RandomAttempt addRandomAttempt(RandomAttempt randomAttempt) {
         updateStatsOfUser(randomAttempt.getUser(),randomAttempt);
-        randomAttemptRepository.save(randomAttempt);
+        RandomAttempt r = randomAttemptRepository.save(randomAttempt);
+        r.getUser().clear();
+        return r;
     }
 
     @Override
-    public void addQuoteAttempt(QuoteAttempt quoteAttempt) {
+    public QuoteAttempt addQuoteAttempt(QuoteAttempt quoteAttempt) {
         updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
-        quoteAttemptRepository.save(quoteAttempt);
+        QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
+        q.getUser().clear();
+        return q;
     }
 
     @Override
-    public void addQuoteAttempts(List<QuoteAttempt> quoteAttempts) {
+    public List<QuoteAttempt> addQuoteAttempts(List<QuoteAttempt> quoteAttempts) {
+        List<QuoteAttempt> quoteAttemptList = new ArrayList<QuoteAttempt>();
+        QuoteAttempt q;
         for (QuoteAttempt quoteAttempt:quoteAttempts) {
             updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
-            quoteAttemptRepository.save(quoteAttempt);
+            q = quoteAttemptRepository.save(quoteAttempt);
+            q.getUser().clear();
+            quoteAttemptList.add(q);
         }
+        return quoteAttemptList;
     }
 
     @Override
@@ -116,6 +125,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         if (!quoteAttempt.isCompleted()){
             return null;
         }
+        //System.out.println(quoteAttempt);
         //Reiknum út tíma tilraunar í mínutum
         float time_in_ms = (quoteAttempt.getTime_finish().getTime()-quoteAttempt.getTime_start().getTime());
         float time_in_s = time_in_ms/1000;
