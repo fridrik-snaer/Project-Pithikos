@@ -3,6 +3,9 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * Entity for storing information about a single attempt at a quote
+ */
 @Entity
 @Table(name = "quoteAttempts")
 public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt>{

@@ -2,6 +2,9 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 
 import javax.persistence.*;
 
+/**
+ * An entity used for storing words, their language and their language specific frequency rank.
+ */
 @Entity
 @Table(name = "words")
 public class Word {

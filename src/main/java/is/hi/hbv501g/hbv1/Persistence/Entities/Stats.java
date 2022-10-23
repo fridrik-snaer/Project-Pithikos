@@ -2,6 +2,10 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 
 import javax.persistence.*;
 import java.util.List;
+
+/**
+ * An entity used for storing statistical data of a user
+ */
 @Entity
 public class Stats {
     @javax.persistence.Id
