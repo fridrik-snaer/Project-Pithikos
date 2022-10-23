@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
 
         //TODO: VELJA USER ENDPOINT
         http.authorizeRequests()
-            .antMatchers(GET, "/api/user/**", "/api/users/**")
+            .antMatchers(GET, "/api/user/**")
             .hasAnyAuthority("ROLE_USER");
 
 //        //TODO: VELJA ADMIN ONLY ENDPOINT

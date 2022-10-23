@@ -39,6 +39,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if( request.getServletPath().equals("/") ||
             request.getServletPath().equals("/api/login/**") ||
             request.getServletPath().equals("/api/words/**") ||
+            request.getServletPath().equals("/api/quotes/**") ||
             request.getServletPath().equals("/api/token/refresh")) {
             filterChain.doFilter(request,response);
         } else {

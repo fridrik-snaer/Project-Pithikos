@@ -1,5 +1,10 @@
 package is.hi.hbv501g.hbv1.Services.Implementations;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Relationship;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
@@ -16,12 +21,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service @Slf4j @RequiredArgsConstructor @Transactional
 //Extenda userDetails service fyrir security reasons
@@ -96,6 +106,49 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     @Override
     public User findById(long id) {
         return userRepository.findById(id);
+    }
+
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("I am in the refreshToken method");
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String refreshToken =  authorizationHeader.substring("Bearer ".length());
+                log.info("Refresh token {}", refreshToken);
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes()); //TODO: refactor secret
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(refreshToken);
+                String username = decodedJWT.getSubject(); //This http request only has the token
+                User user = getUser(username);
+
+                String accessToken = JWT.create()
+                        .withSubject(user.getUsername())
+                        .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 60 * 1000))) //access Token expires in 10 minutes
+                        .withIssuer(request.getRequestURL().toString())
+                        .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                        .sign(algorithm);
+
+                Map<String,String> tokens = new HashMap<>();
+                tokens.put("accessToken", accessToken);
+                tokens.put("refreshToken", refreshToken);
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+            } catch (Exception e){
+                log.error("Error logging in: {}", e.getMessage());
+                response.setHeader("error", e.getMessage());
+                response.setStatus(FORBIDDEN.value());
+
+                //This sets the response content type to application json
+                //and returns a json with the error message
+                Map<String,String> error = new HashMap<>();
+                error.put("errorMessage",e.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+            }
+        } else {
+            throw new RuntimeException("Refresh token is missing");
+        }
     }
 
     private boolean exists(User user){
