@@ -68,10 +68,12 @@ public class StatisticsController {
     }
 
     @CrossOrigin
-    @RequestMapping (value="/getSpeedPercentileForQuoteAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int getSpeedPercentileForQuoteAttempt(@RequestBody QuoteAttempt quoteAttempt){
-        long quoteAttempt_id = quoteAttempt.getId();
-        return statisticsService.getSpeedPercentileForQuoteAttempt(quoteAttempt_id);
+    @RequestMapping (value="/getComparisons/{quoteAttempt_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int[] getComparisons(@PathVariable int quoteAttempt_id){
+        int[] stats = new int[2];
+        stats[0] = statisticsService.getSpeedPercentileForQuoteAttempt(quoteAttempt_id);
+        stats[1] = statisticsService.getAccuracyPercentileForQuoteAttempt(quoteAttempt_id);
+        return stats;
     }
 
     @CrossOrigin

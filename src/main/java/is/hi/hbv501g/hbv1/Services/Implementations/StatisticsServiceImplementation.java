@@ -17,7 +17,7 @@ import static java.util.Objects.isNull;
 @Service
 public class StatisticsServiceImplementation implements StatisticsService {
     private final int LeaderboardLength = 10;
-    private final int KeystrokesPerWord = 5;
+    private final float KeystrokesPerWord = (float)5.156;
     private StatsRepository statsRepository;
     private QuoteAttemptRepository quoteAttemptRepository;
     private RandomAttemptRepository randomAttemptRepository;
@@ -44,6 +44,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
         QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
         q.getUser().clear();
+        System.out.println("Hér er q-Id "+ quoteAttempt.getQuote().getId());
         return q;
     }
 
@@ -78,6 +79,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public int getSpeedPercentileForQuoteAttempt(long quoteAttempt_id) {
+        System.out.println(quoteAttempt_id);
         QuoteAttempt quoteAttempt = quoteAttemptRepository.findById(quoteAttempt_id);
         List<QuoteAttempt> quoteAttempts = quoteAttemptRepository.findByQuote(quoteAttempt.getQuote());
         int total = 0;
@@ -109,6 +111,8 @@ public class StatisticsServiceImplementation implements StatisticsService {
         if (total==0){
             return 0;
         }
+        System.out.println("Over er : " + over);
+        System.out.println("Total er : " + total);
         return over*100/total;
     }
 
