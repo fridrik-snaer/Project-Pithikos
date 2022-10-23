@@ -3,6 +3,9 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * Entity for storing information about a single attempt at random words
+ */
 @Entity
 @Table(name = "randomAttempts")
 public class RandomAttempt /*extends Attempt*/{

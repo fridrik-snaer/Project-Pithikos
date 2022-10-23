@@ -3,6 +3,9 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * An entity for storing information about the friendship relation between two users
+ */
 @Entity
 @Table(name = "relationships")
 public class Relationship {

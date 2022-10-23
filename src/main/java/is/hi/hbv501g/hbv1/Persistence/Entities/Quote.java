@@ -5,6 +5,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Specialized container for text used in quotes
+ */
 @Entity
 @Table(name = "quotes")
 public class Quote {

@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * An entity used for storing data about the user
+ */
 @Entity
 @Data
 @NoArgsConstructor

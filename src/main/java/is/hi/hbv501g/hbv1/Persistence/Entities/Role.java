@@ -9,6 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * An entity made for storing information about users role in our application and is used to restrict access to certain features
+ */
 @Entity @Data @AllArgsConstructor @NoArgsConstructor
 public class Role {
     @Id

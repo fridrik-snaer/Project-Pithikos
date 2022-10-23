@@ -2,6 +2,9 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 
 import javax.persistence.*;
 
+/**
+ * Specialised container for text used in lessons
+ */
 @Entity
 @Table(name = "lessons")
 public class Lesson {
