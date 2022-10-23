@@ -31,23 +31,38 @@ public class StatisticsServiceImplementation implements StatisticsService {
         this.quoteRepository = quoteRepository;
     }
 
+    /**
+     * Adds a random attempt to the database, also updates the stats of the user with respect to the attempt
+     * @param randomAttempt the attempt being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @Override
     public RandomAttempt addRandomAttempt(RandomAttempt randomAttempt) {
         updateStatsOfUser(randomAttempt.getUser(),randomAttempt);
         RandomAttempt r = randomAttemptRepository.save(randomAttempt);
+        //To prevent infinite recursions
         r.getUser().clear();
         return r;
     }
 
+    /**
+     * Adds a quote attempt to the database, also updates the stats of the user with respect to the attempt
+     * @param quoteAttempt the attempt being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @Override
     public QuoteAttempt addQuoteAttempt(QuoteAttempt quoteAttempt) {
         updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
         QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
         q.getUser().clear();
-        System.out.println("Hér er q-Id "+ quoteAttempt.getQuote().getId());
         return q;
     }
 
+    /**
+     * Adds quote attempts to the database, also updates the stats of the user with respect to the attempts
+     * @param  quoteAttempts the attempts being added
+     * @return The attempts being added along with their newly generated id for future reference
+     */
     @Override
     public List<QuoteAttempt> addQuoteAttempts(List<QuoteAttempt> quoteAttempts) {
         List<QuoteAttempt> quoteAttemptList = new ArrayList<QuoteAttempt>();
@@ -61,6 +76,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return quoteAttemptList;
     }
 
+    /**
+     * Returns the leaderboard for a quote in regard to speed
+     * @param quote_id Id of quote in question
+     * @return The quoteAttempts with info about the user and quote
+     */
     @Override
     public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
         Quote quote = quoteRepository.findById(quote_id);
@@ -77,6 +97,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return ret;
     }
 
+    /**
+     * Calculates the ranking of a quoteAttempt in comparisons to others in regard to speed
+     * @param quoteAttempt_id Id of quoteAttempts in question
+     * @return The attempt was in the top "return value"% of all attempts
+     */
     @Override
     public int getSpeedPercentileForQuoteAttempt(long quoteAttempt_id) {
         System.out.println(quoteAttempt_id);
@@ -95,7 +120,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
         }
         return over*100/total;
     }
-
+    /**
+     * Calculates the ranking of a quoteAttempt in comparisons to others in regard to accuracy
+     * @param quoteAttempt_id Id of quoteAttempts in question
+     * @return The attempt was in the top "return value"% of all attempts
+     */
     @Override
     public int getAccuracyPercentileForQuoteAttempt(long quoteAttempt_id) {
         QuoteAttempt quoteAttempt = quoteAttemptRepository.findById(quoteAttempt_id);
@@ -116,6 +145,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return over*100/total;
     }
 
+    /**
+     *
+     * @param user
+     * @return
+     */
     @Override
     public Stats getStatisticsOfUser(User user) {
         return statsRepository.findByUser(user);
