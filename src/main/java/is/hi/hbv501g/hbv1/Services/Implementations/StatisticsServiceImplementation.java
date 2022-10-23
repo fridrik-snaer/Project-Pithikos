@@ -115,8 +115,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
             }
             total++;
         }
-        if (total==0){
-            return 0;
+        if (total==0 || over==0){
+            return 1;
+        }
+        if (total==over){
+            return 99;
         }
         return over*100/total;
     }
@@ -137,12 +140,13 @@ public class StatisticsServiceImplementation implements StatisticsService {
             }
             total++;
         }
-        if (total==0){
-            return 0;
+        if (total==0 || over==0){
+            return 1;
         }
-        System.out.println("Over er : " + over);
-        System.out.println("Total er : " + total);
-        return over*100/total;
+        if (total==over){
+            return 99;
+        }
+        return (over*100/total);
     }
 
     /**
