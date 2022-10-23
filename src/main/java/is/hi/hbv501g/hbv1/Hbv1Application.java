@@ -1,9 +1,5 @@
 package is.hi.hbv501g.hbv1;
 
-import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
-import is.hi.hbv501g.hbv1.Persistence.Entities.User;
-import is.hi.hbv501g.hbv1.Services.UserService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +19,15 @@ public class Hbv1Application {
         SpringApplication.run(Hbv1Application.class, args);
     }
 
+    /**
+     * A bean that provides the application access to the BCryptPasswordEnoder
+     */
     @Bean
     PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
 
+    /**
+     * A bean that allows us to inject data into the database
+     */
 //    @Bean
 //    CommandLineRunner run(UserService userService){
 //        return (args) -> {
@@ -36,6 +38,10 @@ public class Hbv1Application {
 //            userService.addRoleToUser("admin", "ROLE_USER");
 //        };
 //    }
+
+    /**
+     * A bean that configures application cors policy configuration
+     */
      @Bean
      CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
