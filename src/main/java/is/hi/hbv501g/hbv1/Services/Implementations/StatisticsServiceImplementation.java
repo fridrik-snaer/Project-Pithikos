@@ -146,17 +146,21 @@ public class StatisticsServiceImplementation implements StatisticsService {
     }
 
     /**
-     *
-     * @param user
-     * @return
+     * Return the Stats object that User contains which includes statistical info about stats
+     * @param user the user in question
+     * @return a stats object with statistical info about user
      */
     @Override
     public Stats getStatisticsOfUser(User user) {
         return statsRepository.findByUser(user);
     }
 
-    //Uppfærir stats á User alltaf þegar bætt er við nýrri tilraun
-    //Fullútfært
+    /**
+     * Updates the stats of a user in regard to a new quote attempt
+     * @param user the user whose stats need updating
+     * @param quoteAttempt the quoteattempt which needs to update according to
+     * @return the updated stats
+     */
     @Override
     public Stats updateStatsOfUser(User user,QuoteAttempt quoteAttempt) {
         //Uppfærum ekki neitt ef ekki var klárað tilraunina
@@ -201,6 +205,13 @@ public class StatisticsServiceImplementation implements StatisticsService {
         //Skilum bara til gamans
         return stats;
     }
+
+    /**
+     * Updates the stats of a user in regard to a new random attempt
+     * @param user the user whose stats need updating
+     * @param quoteAttempt the randomattempt which needs to update according to
+     * @return the updated stats
+     */
     @Override
     public Stats updateStatsOfUser(User user,RandomAttempt randomAttempt) {
         if (!randomAttempt.isCompleted()){
@@ -240,6 +251,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return stats;
     }
 
+    /**
+     * Gives all stats objects in database
+     * @return all stats object in database
+     */
     @Override
     public List<Stats> getAllStats() {
         return statsRepository.findAll();

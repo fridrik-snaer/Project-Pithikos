@@ -33,41 +33,42 @@ public class TypingServiceImplementation implements TypingService {
     }
 
     /**
-     *
-     * @param lang
-     * @return
+     * Returns all words of a certain language
+     * @param lang the language you want
+     * @return all words of that language
      */
     @Override
     public List<Word> getRandomWordsByLanguage(Lang lang) {
          return wordRepository.findAllByLanguage(lang);
     }
 
+    /**
+     * Returns all words of a certain language with a rank higher than rank
+     * @param lang the language you want
+     * @param rank the max rank you want
+     * @return a list the size og rank of the rank most common words of language lang
+     */
     @Override
     public List<Word> getRandomWords(Lang lang, int rank) {
         List<Word> words = wordRepository.findAllByLanguageAndAndRankLessThanEqual(lang,rank);
-        //Þetta ætti ekki að þurfa en What do I know?
-        //words.forEach(word -> {
-        //    String decodedToUTF8 = new String(word.getText().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        //    word.setText(decodedToUTF8);
-        //});
         return words;
     }
 
-    @Override
-    public List<Word> getAllWords() {
-        return wordRepository.findAll();
-    }
-
+    /**
+     * Gets all quotes of a certain language
+     * @param lang the language in question
+     * @return all quotes of the language
+     */
     @Override
     public List<Quote> getQuotes(Lang lang) {
         return quoteRepository.findAllByAcceptedTrueAndDailyFalseAndLanguage(lang);
     }
 
-    @Override
-    public List<Lesson> getLessons(int lvl, Lang lang) {
-        return null;
-    }
-
+    /**
+     * Returns the quote of the day, all requests in the span of 24 hours return the same quote
+     * @param lang language of quote
+     * @return The same quote in the span of 24 hours
+     */
     @Override
     public Quote getDailyChallenge(Lang lang) {
         long diff = System.currentTimeMillis()-theFirstDay.getTime();
@@ -86,6 +87,21 @@ public class TypingServiceImplementation implements TypingService {
         return null;
     }
 
+    @Override
+    public List<Word> getAllWords() {
+        return null;
+    }
+
+    @Override
+    public List<Lesson> getLessons(int lvl, Lang lang) {
+        return null;
+    }
+
+    /**
+     * Finds a quote by its id
+     * @param quote_id the id of the quote
+     * @return the quote
+     */
     @Override
     public Quote getQuoteById(long quote_id) {
         return quoteRepository.findById(quote_id);

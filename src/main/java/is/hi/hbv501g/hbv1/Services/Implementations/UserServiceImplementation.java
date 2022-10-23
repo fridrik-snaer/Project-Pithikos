@@ -42,6 +42,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     private final RelationshipRepository relationshipRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * saves a user to the database
+     * @param user the user to save
+     * @return the user with its newly generated id
+     */
     @Override
     public User saveUser(User user) {
         log.info("Saved new user {} to the database", user.getUsername());
@@ -49,17 +54,32 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return userRepository.save(user);
     }
 
+    /**
+     * Find a user by username
+     * @param username the username to search by
+     * @return the user
+     */
     @Override
     public User getUser(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Saves a new role to database
+     * @param role the role to be saved
+     * @return the role
+     */
     @Override
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the database", role.getName());
         return roleRepository.save(role);
     }
 
+    /**
+     * Gives a user a role
+     * @param username the user to be given a role
+     * @param roleName the role to be given to the user
+     */
     @Override
     public void addRoleToUser(String username, String roleName) {
         User user = userRepository.findByUsername(username);
@@ -69,27 +89,17 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         userRepository.save(user);
     }
 
+    /**
+     * deletes a user
+     * @param user the user to be deleted
+     */
     @Override
     public void delete(User user) {
         userRepository.delete(user);
     }
-    //TODO græja equals
+
     @Override
     public User changePassword(long user_id, String newPassword) {
-//        Sorry braut þetta alveg frikki, kv. Valdi
-
-//        System.out.println(user_id);
-//        User user = this.findById(user_id);
-//        System.out.println(loggedIn.getUsername());
-//        System.out.println(user.getUsername());
-//        if (loggedIn.equal(user)) {
-//            userRepository.delete(user);
-//            user.setPassword(newPassword);
-//            User newUser = userRepository.save(user);
-//            loggedIn = newUser;
-//            return newUser;
-//        }
-//        System.out.println("Ekki sami loggaður inn og reynt að breyta lykilorði");
         return null;
     }
 
@@ -103,6 +113,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return null;
     }
 
+    /**
+     * Find a user by his id
+     * @param id the id of the user
+     * @return the user
+     */
     @Override
     public User findById(long id) {
         return userRepository.findById(id);
@@ -151,6 +166,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         }
     }
 
+    /**
+     * Checks if user exists in database
+     * @param user the user in question
+     * @return true if he exists, false otherwise
+     */
     private boolean exists(User user){
         User dbUser = userRepository.findByUsername(user.getUsername());
         return !isNull(dbUser);
