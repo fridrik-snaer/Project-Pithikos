@@ -32,6 +32,11 @@ public class TypingServiceImplementation implements TypingService {
         this.quoteRepository = quoteRepository;
     }
 
+    /**
+     *
+     * @param lang
+     * @return
+     */
     @Override
     public List<Word> getRandomWordsByLanguage(Lang lang) {
          return wordRepository.findAllByLanguage(lang);
