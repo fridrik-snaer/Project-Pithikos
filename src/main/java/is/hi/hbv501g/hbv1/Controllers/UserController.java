@@ -18,10 +18,18 @@ import java.util.Map;
 
 import static java.util.Objects.isNull;
 
+/**
+ * Handles user related endpoints and token refreshing
+ */
 @RestController @RequestMapping("/api") @RequiredArgsConstructor @Slf4j
 public class UserController {
     private final UserService userService;
 
+    /**
+     * Creates account for user and saves it in the database if they do not exist there already
+     * @param user the user to be created
+     * @return the newly created user
+     */
     @CrossOrigin
     @RequestMapping(value="/createAccount",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> createAccount(@RequestBody User user){
@@ -34,6 +42,11 @@ public class UserController {
         return ResponseEntity.created(uri).body(user);
     }
 
+    /**
+     * Creates a new role which can be added to users and adds it to the database
+     * @param role the new role
+     * @return the newly created role
+     */
     @CrossOrigin
     @RequestMapping(value="/role/save")
     public ResponseEntity<Role> createRole(@RequestBody Role role){
@@ -41,14 +54,12 @@ public class UserController {
         return ResponseEntity.created(uri).body(userService.saveRole(role));
     }
 
-    @CrossOrigin
-    @PostMapping(value="/changePassword",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void changePassword(@RequestBody Map<String, String> json){
-        int id = Integer.parseInt(json.get("user_id"));
-        String password = json.get("password");
-        userService.changePassword(id,password);
-    }
-
+    /**
+     * Get new accessToken from a refresh token. This function behaves similarly to middleware
+     * @param request the incoming request which must have Content-Type: application/json containing the accessToken.
+     * @param response the response to be sent back.
+     * @throws IOException
+     */
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         userService.refreshToken(request,response);

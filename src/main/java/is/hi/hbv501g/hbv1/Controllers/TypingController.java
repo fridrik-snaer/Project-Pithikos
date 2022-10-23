@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Handles all typing data related endpoints
+ */
 @RestController @Slf4j
 public class TypingController {
     private final TypingService typingService;
@@ -43,6 +44,7 @@ public class TypingController {
      * @return returns all words in specified language with frequency higher or equal to
      * the specified rank
      */
+    //TODO: refactor path variables to use ?key=value&key2=value2
     @CrossOrigin
     @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
@@ -60,6 +62,11 @@ public class TypingController {
         return typingService.getQuotes(Lang.valueOf(lang));
     }
 
+    /**
+     * Returns the quote of the day, all requests in the span of 24 hours return the same quote
+     * @param lang language of quote
+     * @return The same quote in the span of 24 hours
+     */
     @CrossOrigin
     @RequestMapping(value="/getDailyQuote/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public Quote getDailyChallengeByLanguage(@PathVariable String lang) {
