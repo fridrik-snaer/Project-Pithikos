@@ -1,5 +1,7 @@
 package is.hi.hbv501g.hbv1;
 
+import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
+import is.hi.hbv501g.hbv1.Persistence.Entities.User;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,12 +22,18 @@ public class Hbv1Application {
     public static void main(String[] args) {
         SpringApplication.run(Hbv1Application.class, args);
     }
+
     @Bean
     PasswordEncoder passwordEncoder() {return new BCryptPasswordEncoder();}
-//
+
 //    @Bean
 //    CommandLineRunner run(UserService userService){
 //        return (args) -> {
+//            userService.saveRole(new Role(null,"ROLE_USER"));
+//            userService.saveRole(new Role(null,"ROLE_ADMIN"));
+//            userService.saveUser(new User("admin", "admin", "admin"));
+//            userService.addRoleToUser("admin", "ROLE_ADMIN");
+//            userService.addRoleToUser("admin", "ROLE_USER");
 //        };
 //    }
      @Bean

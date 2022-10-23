@@ -15,6 +15,7 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
     public Long getId() {
         return id;
     }
@@ -31,5 +32,4 @@ public class Role {
         this.name = name;
     }
 
-    private String name;
 }
