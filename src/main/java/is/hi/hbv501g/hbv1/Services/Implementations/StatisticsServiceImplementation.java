@@ -115,10 +115,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
             }
             total++;
         }
-        if (total==0 || over==0){
+        if (total==0){
             return 1;
         }
-        if (total==over){
+        if (over==0 || total==over){
             return 99;
         }
         return over*100/total;
@@ -135,18 +135,18 @@ public class StatisticsServiceImplementation implements StatisticsService {
         int total = 0;
         int over = 0;
         for (QuoteAttempt qa:quoteAttempts) {
-            if (((float)quoteAttempt.getCorrect()/(float)quoteAttempt.getKeystrokes())<=((float)qa.getCorrect()/(float)qa.getKeystrokes())){
+            if (((float)quoteAttempt.getCorrect()/(float)quoteAttempt.getKeystrokes())>=((float)qa.getCorrect()/(float)qa.getKeystrokes())){
                 over++;
             }
             total++;
         }
-        if (total==0 || over==0){
+        if (total==0 || total==over){
             return 1;
         }
-        if (total==over){
+        if (over==0){
             return 99;
         }
-        return (over*100/total);
+        return 100-(over*100/total);
     }
 
     /**
