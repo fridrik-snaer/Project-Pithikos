@@ -59,6 +59,11 @@ public class TypingServiceImplementation implements TypingService {
         return quoteRepository.findAllByAcceptedTrueAndDailyFalseAndLanguage(lang);
     }
 
+    @Override
+    public List<Quote> getQuotesWithNonAcc(Lang lang){
+        return quoteRepository.findAllByDailyFalseAndLanguage(lang);
+    }
+
     /**
      * Returns the quote of the day, all requests in the span of 24 hours return the same quote
      * @param lang language of quote
@@ -69,7 +74,7 @@ public class TypingServiceImplementation implements TypingService {
         long diff = System.currentTimeMillis()-theFirstDay.getTime();
         long day_diff = diff/millisInDay;
         List<Quote> dailies = quoteRepository.findAllByDailyTrue();
-        return dailies.get((int)day_diff);
+        return dailies.get((int)day_diff%dailies.size());
     }
 
     @Override
@@ -79,7 +84,9 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public Quote submitQuote(Quote quote) {
-        return null;
+        Quote quote1 = new Quote(quote.getText(),quote.getLanguage(),quote.getOrigin(),false,false);
+        quoteRepository.save(quote1);
+        return quote;
     }
 
     @Override
@@ -100,5 +107,10 @@ public class TypingServiceImplementation implements TypingService {
     @Override
     public Quote getQuoteById(long quote_id) {
         return quoteRepository.findById(quote_id);
+    }
+
+    @Override
+    public void deleteQuote(Quote quote) {
+        quoteRepository.delete(quote);
     }
 }

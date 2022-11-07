@@ -18,6 +18,7 @@ import static java.util.Objects.isNull;
 public class StatisticsServiceImplementation implements StatisticsService {
     private final int LeaderboardLength = 10;
     private final float KeystrokesPerWord = (float)5.156;
+    private final int AttemptsToAccept = 10;
     private StatsRepository statsRepository;
     private QuoteAttemptRepository quoteAttemptRepository;
     private RandomAttemptRepository randomAttemptRepository;
@@ -52,6 +53,12 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public QuoteAttempt addQuoteAttempt(QuoteAttempt quoteAttempt) {
+        boolean quoteAccepted = quoteAttempt.getQuote().isAccepted();
+        boolean attemptedEnough = quoteAttemptRepository.countAllByQuote(quoteAttempt.getQuote())>AttemptsToAccept;
+        if (!quoteAccepted && attemptedEnough){
+                quoteAttempt.getQuote().setAccepted(true);
+                quoteRepository.save(quoteAttempt.getQuote());
+        }
         updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
         QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
         q.getUser().clear();
