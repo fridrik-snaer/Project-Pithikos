@@ -197,4 +197,8 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 authorities);
     }
 
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

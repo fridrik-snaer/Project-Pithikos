@@ -14,4 +14,10 @@ public interface StatisticsService {
     Stats updateStatsOfUser(User user,QuoteAttempt quoteAttempt);
     Stats updateStatsOfUser(User user,RandomAttempt randomAttempt);
     List<Stats> getAllStats();
+
+    LessonAttempt addLessonAttempt(LessonAttempt lessonAttempt);
+
+    List<Lesson> getUsersLessonsCompleted(User user,Lang lang);
+
+    List<Stats> getLeaderBoardOfUsers();
 }

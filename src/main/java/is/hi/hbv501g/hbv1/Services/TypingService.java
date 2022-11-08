@@ -22,4 +22,8 @@ public interface TypingService {
     List<Quote> getQuotesWithNonAcc(Lang valueOf);
 
     void deleteQuote(Quote quote);
+
+    Lesson getLessonByID(long id);
+
+    List<Lesson> getLessonsByLanguage(Lang lang);
 }

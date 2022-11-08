@@ -25,4 +25,6 @@ public interface UserService {
     User findById(long id);
 
     void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
+
+    User findByUsername(String username);
 }
