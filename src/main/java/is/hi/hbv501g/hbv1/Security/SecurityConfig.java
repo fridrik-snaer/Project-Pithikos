@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Configures security of routing by intercepting all http requests and inserting Middleware that
@@ -43,12 +44,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+//        http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         //TODO: VELJA NON-VERIFIED ENDPOINTS
         http.authorizeRequests()
-            .antMatchers("/", "/api/words/**", "/api/quotes/**", "/api/login/**", "/api/token/refresh/**")
+            .antMatchers("/", "/api/words/**", "/api/quotes/**", "/api/login/**", "/api/refreshToken/**")
             .permitAll();
 
         //TODO: VELJA USER ENDPOINT
@@ -57,9 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
             .hasAnyAuthority("ROLE_USER");
 
         //TODO: VELJA ADMIN ONLY ENDPOINT
-//        http.authorizeRequests()
-//            .antMatchers()
-//            .hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests()
+            .antMatchers(POST, "/api/role/save")
+            .hasAnyAuthority("ROLE_ADMIN");
 //        http.authorizeRequests().anyRequest().authenticated();
 
         //Middleware authorization / authentication

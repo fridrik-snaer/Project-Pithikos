@@ -16,6 +16,7 @@ import java.util.List;
  * Handles all typing data related endpoints
  */
 @RestController @Slf4j
+@RequestMapping("/api")
 public class TypingController {
     private final TypingService typingService;
     @Autowired

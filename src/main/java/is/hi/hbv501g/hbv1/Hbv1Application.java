@@ -9,6 +9,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import java.util.Arrays;
 
 @SpringBootApplication
@@ -16,6 +17,8 @@ public class Hbv1Application {
     //Valdi var hér
     //Ívan var hér!!!
     public static void main(String[] args) {
+        System.out.println(Math.sqrt(9));
+
         SpringApplication.run(Hbv1Application.class, args);
     }
 
