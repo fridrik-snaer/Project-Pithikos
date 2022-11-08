@@ -59,8 +59,9 @@ public class UserController {
      * @param response the response to be sent back.
      * @throws IOException
      */
-    @GetMapping("/token/refresh")
+    @GetMapping("/refreshToken")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("Refresh controller");
         userService.refreshToken(request,response);
     }
 }

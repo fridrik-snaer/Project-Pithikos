@@ -136,7 +136,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject(); //This http request only has the token
                 User user = getUser(username);
-
+                System.out.println("Creating new accessToken");
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())
                         .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 60 * 1000))) //access Token expires in 10 minutes
@@ -144,6 +144,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                         .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                         .sign(algorithm);
 
+                System.out.println("Creating response");
                 Map<String,String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
