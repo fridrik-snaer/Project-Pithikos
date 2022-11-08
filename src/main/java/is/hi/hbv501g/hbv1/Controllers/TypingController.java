@@ -44,7 +44,7 @@ public class TypingController {
      * the specified rank
      */
     @CrossOrigin
-    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value="/words/{lang}/{rank}", method=RequestMethod.GET, produces="application/json;charset=UTF-8")
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
         return typingService.getRandomWords(Lang.valueOf(lang),Integer.parseInt(rank));
     }
