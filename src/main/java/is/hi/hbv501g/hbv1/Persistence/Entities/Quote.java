@@ -5,6 +5,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Specialized container for text used in quotes
+ */
 @Entity
 @Table(name = "quotes")
 public class Quote {
@@ -30,6 +33,8 @@ public class Quote {
         this.origin = origin;
         this.accepted = accepted;
         this.daily = daily;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.updatedAt = new Timestamp(System.currentTimeMillis());
     }
 
     public Quote(long ID) {
@@ -48,6 +53,22 @@ public class Quote {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
+    }
+
+    public boolean isDaily() {
+        return daily;
+    }
+
+    public void setDaily(boolean daily) {
+        this.daily = daily;
     }
 
     public Lang getLanguage() {

@@ -13,13 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-
 import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Configures security of routing by intercepting all http requests and inserting Middleware that
@@ -59,10 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
 
         //TODO: VELJA USER ENDPOINT
         http.authorizeRequests()
-            .antMatchers(GET, "/api/user/**", "/api/users/**")
+            .antMatchers(GET, "/api/user/**")
             .hasAnyAuthority("ROLE_USER");
 
-//        //TODO: VELJA ADMIN ONLY ENDPOINT
+        //TODO: VELJA ADMIN ONLY ENDPOINT
 //        http.authorizeRequests()
 //            .antMatchers()
 //            .hasAnyAuthority("ROLE_ADMIN");

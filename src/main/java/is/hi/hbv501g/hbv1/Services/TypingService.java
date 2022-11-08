@@ -19,4 +19,11 @@ public interface TypingService {
     Quote getUnacceptedQuote(Lang lang);
     Quote submitQuote(Quote quote);
     Quote getQuoteById(long quote_id);
+    List<Quote> getQuotesWithNonAcc(Lang valueOf);
+
+    void deleteQuote(Quote quote);
+
+    Lesson getLessonByID(long id);
+
+    List<Lesson> getLessonsByLanguage(Lang lang);
 }

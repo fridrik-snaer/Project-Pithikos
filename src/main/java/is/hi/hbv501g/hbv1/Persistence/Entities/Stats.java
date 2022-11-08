@@ -2,6 +2,10 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 
 import javax.persistence.*;
 import java.util.List;
+
+/**
+ * An entity used for storing statistical data of a user
+ */
 @Entity
 public class Stats {
     @javax.persistence.Id
@@ -9,25 +13,25 @@ public class Stats {
     private long Id;
     @OneToOne(fetch = FetchType.LAZY)
     private User user;
-    private float avg_wpm;
-    private float avg_acc;
-    private float tests_taken;
-    private float tests_completed;
+    private float avgWpm;
+    private float avgAcc;
+    private int testsTaken;
+    private int testsCompleted;
 
 //    private List<Attempt> allAttempts; Kannski sniðugt
     public Stats() {
-        this.avg_wpm = 0;
-        this.avg_acc = 0;
-        this.tests_taken = 0;
-        this.tests_completed = 0;
+        this.avgWpm = 0;
+        this.avgAcc = 0;
+        this.testsTaken = 0;
+        this.testsCompleted = 0;
     }
 
-    public Stats(User user, float avg_wpm, float avg_acc, float tests_taken, float tests_completed) {
+    public Stats(User user, float avgWpm, float avgAcc, int testsTaken, int testsCompleted) {
         this.user = user;
-        this.avg_wpm = avg_wpm;
-        this.avg_acc = avg_acc;
-        this.tests_taken = tests_taken;
-        this.tests_completed = tests_completed;
+        this.avgWpm = avgWpm;
+        this.avgAcc = avgAcc;
+        this.testsTaken = testsTaken;
+        this.testsCompleted = testsCompleted;
     }
 
     //    <editor-fold desc="Functions">
@@ -38,36 +42,36 @@ public class Stats {
 //    </editor-fold>
 
 //<editor-fold desc="Getters & Setters">
-    public float getAvg_wpm() {
-        return avg_wpm;
+    public float getAvgWpm() {
+        return avgWpm;
     }
 
-    public void setAvg_wpm(float avg_wpm) {
-        this.avg_wpm = avg_wpm;
+    public void setAvgWpm(float avgWpm) {
+        this.avgWpm = avgWpm;
     }
 
-    public float getAvg_acc() {
-        return avg_acc;
+    public float getAvgAcc() {
+        return avgAcc;
     }
 
-    public void setAvg_acc(float avg_acc) {
-        this.avg_acc = avg_acc;
+    public void setAvgAcc(float avgAcc) {
+        this.avgAcc = avgAcc;
     }
 
-    public float getTests_taken() {
-        return tests_taken;
+    public int getTestsTaken() {
+        return testsTaken;
     }
 
-    public void setTests_taken(float tests_taken) {
-        this.tests_taken = tests_taken;
+    public void setTestsTaken(int testsTaken) {
+        this.testsTaken = testsTaken;
     }
 
-    public float getTests_completed() {
-        return tests_completed;
+    public int getTestsCompleted() {
+        return testsCompleted;
     }
 
-    public void setTests_completed(float tests_completed) {
-        this.tests_completed = tests_completed;
+    public void setTestsCompleted(int testsCompleted) {
+        this.testsCompleted = testsCompleted;
     }
     //</editor-fold>
 }

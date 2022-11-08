@@ -1,10 +1,7 @@
 package is.hi.hbv501g.hbv1.Services.Implementations;
 
 import is.hi.hbv501g.hbv1.Persistence.Entities.*;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteAttemptRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RandomAttemptRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.StatsRepository;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.*;
 import is.hi.hbv501g.hbv1.Services.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,40 +14,84 @@ import static java.util.Objects.isNull;
 @Service
 public class StatisticsServiceImplementation implements StatisticsService {
     private final int LeaderboardLength = 10;
-    private final int KeystrokesPerWord = 5;
+    private final float KeystrokesPerWord = (float)5.156;
+    private final int AttemptsToAccept = 10;
     private StatsRepository statsRepository;
     private QuoteAttemptRepository quoteAttemptRepository;
     private RandomAttemptRepository randomAttemptRepository;
+    private LessonAttemptRepository lessonAttemptRepository;
     private QuoteRepository quoteRepository;
 
     @Autowired
-    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository) {
+    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
         this.statsRepository = statsRepository;
         this.quoteAttemptRepository = quoteAttemptRepository;
         this.randomAttemptRepository = randomAttemptRepository;
         this.quoteRepository = quoteRepository;
+        this.lessonAttemptRepository = lessonAttemptRepository;
     }
 
+    /**
+     * Adds a random attempt to the database, also updates the stats of the user with respect to the attempt
+     * @param randomAttempt the attempt being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @Override
-    public void addRandomAttempt(RandomAttempt randomAttempt) {
+    public RandomAttempt addRandomAttempt(RandomAttempt randomAttempt) {
         updateStatsOfUser(randomAttempt.getUser(),randomAttempt);
-        randomAttemptRepository.save(randomAttempt);
+        RandomAttempt r = randomAttemptRepository.save(randomAttempt);
+        //To prevent infinite recursions
+        r.getUser().clear();
+        return r;
     }
 
+    /**
+     * Adds a quote attempt to the database, also updates the stats of the user with respect to the attempt
+     * @param quoteAttempt the attempt being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @Override
-    public void addQuoteAttempt(QuoteAttempt quoteAttempt) {
+    public QuoteAttempt addQuoteAttempt(QuoteAttempt quoteAttempt) {
+        boolean quoteAccepted = quoteAttempt.getQuote().isAccepted();
+        boolean attemptedEnough = quoteAttemptRepository.countAllByQuote(quoteAttempt.getQuote())>AttemptsToAccept;
+        if (!quoteAccepted && attemptedEnough){
+                quoteAttempt.getQuote().setAccepted(true);
+                quoteRepository.save(quoteAttempt.getQuote());
+        }
         updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
-        quoteAttemptRepository.save(quoteAttempt);
+        QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
+        q.getUser().clear();
+        return q;
     }
 
+    /**
+     * Adds quote attempts to the database, also updates the stats of the user with respect to the attempts
+     * @param  quoteAttempts the attempts being added
+     * @return The attempts being added along with their newly generated id for future reference
+     */
     @Override
-    public void addQuoteAttempts(List<QuoteAttempt> quoteAttempts) {
+    public List<QuoteAttempt> addQuoteAttempts(List<QuoteAttempt> quoteAttempts) {
+        List<QuoteAttempt> quoteAttemptList = new ArrayList<QuoteAttempt>();
+        QuoteAttempt q;
         for (QuoteAttempt quoteAttempt:quoteAttempts) {
             updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
-            quoteAttemptRepository.save(quoteAttempt);
+            q = quoteAttemptRepository.save(quoteAttempt);
+            q.getUser().clear();
+            quoteAttemptList.add(q);
         }
+        return quoteAttemptList;
     }
 
+    @Override
+    public LessonAttempt addLessonAttempt(LessonAttempt lessonAttempt) {
+        return null;
+    }
+
+    /**
+     * Returns the leaderboard for a quote in regard to speed
+     * @param quote_id Id of quote in question
+     * @return The quoteAttempts with info about the user and quote
+     */
     @Override
     public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
         Quote quote = quoteRepository.findById(quote_id);
@@ -68,7 +109,18 @@ public class StatisticsServiceImplementation implements StatisticsService {
     }
 
     @Override
+    public List<Stats> getLeaderBoardOfUsers() {
+        return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
+    }
+
+    /**
+     * Calculates the ranking of a quoteAttempt in comparisons to others in regard to speed
+     * @param quoteAttempt_id Id of quoteAttempts in question
+     * @return The attempt was in the top "return value"% of all attempts
+     */
+    @Override
     public int getSpeedPercentileForQuoteAttempt(long quoteAttempt_id) {
+        System.out.println(quoteAttempt_id);
         QuoteAttempt quoteAttempt = quoteAttemptRepository.findById(quoteAttempt_id);
         List<QuoteAttempt> quoteAttempts = quoteAttemptRepository.findByQuote(quoteAttempt.getQuote());
         int total = 0;
@@ -80,11 +132,18 @@ public class StatisticsServiceImplementation implements StatisticsService {
             total++;
         }
         if (total==0){
-            return 0;
+            return 1;
+        }
+        if (over==0 || total==over){
+            return 99;
         }
         return over*100/total;
     }
-
+    /**
+     * Calculates the ranking of a quoteAttempt in comparisons to others in regard to accuracy
+     * @param quoteAttempt_id Id of quoteAttempts in question
+     * @return The attempt was in the top "return value"% of all attempts
+     */
     @Override
     public int getAccuracyPercentileForQuoteAttempt(long quoteAttempt_id) {
         QuoteAttempt quoteAttempt = quoteAttemptRepository.findById(quoteAttempt_id);
@@ -92,98 +151,119 @@ public class StatisticsServiceImplementation implements StatisticsService {
         int total = 0;
         int over = 0;
         for (QuoteAttempt qa:quoteAttempts) {
-            if (((float)quoteAttempt.getCorrect()/(float)quoteAttempt.getKeystrokes())<=((float)qa.getCorrect()/(float)qa.getKeystrokes())){
+            if (((float)quoteAttempt.getCorrect()/(float)quoteAttempt.getKeystrokes())>=((float)qa.getCorrect()/(float)qa.getKeystrokes())){
                 over++;
             }
             total++;
         }
-        if (total==0){
-            return 0;
+        if (total==0 || total==over){
+            return 1;
         }
-        return over*100/total;
+        if (over==0){
+            return 99;
+        }
+        return 100-(over*100/total);
     }
 
+    /**
+     * Return the Stats object that User contains which includes statistical info about stats
+     * @param user the user in question
+     * @return a stats object with statistical info about user
+     */
     @Override
     public Stats getStatisticsOfUser(User user) {
         return statsRepository.findByUser(user);
     }
 
+    /**
+     * Updates the stats of a user in regard to a new quote attempt
+     * @param user the user whose stats need updating
+     * @param quoteAttempt the quoteattempt which needs to update according to
+     * @return the updated stats
+     */
     @Override
     public Stats updateStatsOfUser(User user,QuoteAttempt quoteAttempt) {
+        //Uppfærum ekki neitt ef ekki var klárað tilraunina
+        if (!quoteAttempt.isCompleted()){
+            return null;
+        }
+        //System.out.println(quoteAttempt);
+        //Reiknum út tíma tilraunar í mínutum
         float time_in_ms = (quoteAttempt.getTime_finish().getTime()-quoteAttempt.getTime_start().getTime());
-        System.out.println(time_in_ms);
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
-        System.out.println(time);
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
+        //Reiknum wpm á þessari tilraun
         float wpm = (float) (quoteAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
-        System.out.println(wpm);
+        //Reiknum acc á þessari tilraun
         float acc = (float) quoteAttempt.getCorrect()/(float) quoteAttempt.getKeystrokes();
+        //Ef stats eru ekki til þá þarf sértilfælli
         if (isNull(statsRepository.findByUser(user))){
             Stats stats = new Stats(user,wpm,acc,1,quoteAttempt.isCompleted() ? 1 : 0);
             statsRepository.save(stats);
             return stats;
         }
-        if (!quoteAttempt.isCompleted()){
-            return null;
-        }
         Stats stats = statsRepository.findByUser(user);
-        //Uppfæra avg_wpm
-        float old_avg_wpm = stats.getAvg_wpm();
-        float new_avg_wpm = (old_avg_wpm*(float)stats.getTests_completed()+wpm)/(float)(stats.getTests_completed()+1);
-        System.out.println(new_avg_wpm);
-        stats.setAvg_wpm(new_avg_wpm);
+        //Uppfæra avgWpm
+        float old_avgWpm = stats.getAvgWpm();
+        float new_avgWpm = (old_avgWpm*(float)stats.getTestsCompleted()+wpm)/(float)(stats.getTestsCompleted()+1);
+        System.out.println(new_avgWpm);
+        stats.setAvgWpm(new_avgWpm);
         //Uppfæra avg_acc
-        float old_avg_acc = stats.getAvg_acc();
-        float new_avg_acc = (old_avg_acc*(float)stats.getTests_completed()+acc)/(float)(stats.getTests_completed()+1);
-        stats.setAvg_acc(new_avg_acc);
+        float old_avg_acc = stats.getAvgAcc();
+        float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
+        stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
-        if (!quoteAttempt.isCompleted()){
-            stats.setTests_completed(stats.getTests_completed()+1);
+        if (quoteAttempt.isCompleted()){
+            stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
-        stats.setTests_taken(stats.getTests_taken()+1);
+        stats.setTestsTaken(stats.getTestsTaken()+1);
         //Breytum gamla í nýja
         statsRepository.delete(statsRepository.findByUser(user));
         statsRepository.save(stats);
         //Skilum bara til gamans
         return stats;
     }
+
+    /**
+     * Updates the stats of a user in regard to a new random attempt
+     * @param user the user whose stats need updating
+     * @param randomAttempt the randomattempt which needs to update according to
+     * @return the updated stats
+     */
     @Override
     public Stats updateStatsOfUser(User user,RandomAttempt randomAttempt) {
+        if (!randomAttempt.isCompleted()){
+            return null;
+        }
         float time_in_ms = (randomAttempt.getTime_finish().getTime()-randomAttempt.getTime_start().getTime());
-        System.out.println(time_in_ms);
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
-        System.out.println(time);
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
         float wpm = (float) (randomAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
-        System.out.println(wpm);
         float acc = (float) randomAttempt.getCorrect()/(float) randomAttempt.getKeystrokes();
         if (isNull(statsRepository.findByUser(user))){
             Stats stats = new Stats(user,wpm,acc,1,randomAttempt.isCompleted() ? 1 : 0);
             statsRepository.save(stats);
             return stats;
         }
-        if (!randomAttempt.isCompleted()){
-            return null;
-        }
         Stats stats = statsRepository.findByUser(user);
-        //Uppfæra avg_wpm
-        float old_avg_wpm = stats.getAvg_wpm();
-        float new_avg_wpm = (old_avg_wpm*(float)stats.getTests_completed()+wpm)/(float)(stats.getTests_completed()+1);
-        System.out.println(new_avg_wpm);
-        stats.setAvg_wpm(new_avg_wpm);
+        //Uppfæra avgWpm
+        float old_avgWpm = stats.getAvgWpm();
+        float new_avgWpm = (old_avgWpm*(float)stats.getTestsCompleted()+wpm)/(float)(stats.getTestsCompleted()+1);
+        System.out.println(new_avgWpm);
+        stats.setAvgWpm(new_avgWpm);
         //Uppfæra avg_acc
-        float old_avg_acc = stats.getAvg_acc();
-        float new_avg_acc = (old_avg_acc*(float)stats.getTests_completed()+acc)/(float)(stats.getTests_completed()+1);
-        stats.setAvg_acc(new_avg_acc);
+        float old_avg_acc = stats.getAvgAcc();
+        float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
+        stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
         if (!randomAttempt.isCompleted()){
-            stats.setTests_completed(stats.getTests_completed()+1);
+            stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
-        stats.setTests_taken(stats.getTests_taken()+1);
+        stats.setTestsTaken(stats.getTestsTaken()+1);
         //Breytum gamla í nýja
         statsRepository.delete(statsRepository.findByUser(user));
         statsRepository.save(stats);
@@ -191,8 +271,22 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return stats;
     }
 
+    /**
+     * Gives all stats objects in database
+     * @return all stats object in database
+     */
     @Override
     public List<Stats> getAllStats() {
-        return null;
+        return statsRepository.findAll();
+    }
+
+    @Override
+    public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
+        List<Lesson> lessons = new ArrayList<Lesson>();
+        List<LessonAttempt> attempts = lessonAttemptRepository.findByUserAndLessonLang(user,lang);
+        for (LessonAttempt l: attempts) {
+            lessons.add(l.getLesson());
+        }
+        return lessons;
     }
 }

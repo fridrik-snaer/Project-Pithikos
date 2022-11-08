@@ -12,5 +12,6 @@ public interface QuoteAttemptRepository extends JpaRepository<QuoteAttempt, Long
     List<QuoteAttempt> findByQuote(Quote quote);
     QuoteAttempt findById(long id);
     int countAllByUser(User user);
+    int countAllByQuote(Quote quote);
     QuoteAttempt save(QuoteAttempt quoteAttempt);
 }

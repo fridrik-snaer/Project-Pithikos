@@ -3,46 +3,60 @@ package is.hi.hbv501g.hbv1.Persistence.Entities;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-/**
- * Entity for storing information about a single attempt at random words
- */
 @Entity
-@Table(name = "randomAttempts")
-public class RandomAttempt /*extends Attempt*/{
+@Table(name = "lessonAttempts")
+public class LessonAttempt implements Comparable<LessonAttempt>{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
-    @ManyToOne(fetch = FetchType.LAZY)
+    private long id;
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Lesson lesson;
     private Timestamp time_start;
     private Timestamp time_finish;
     private int keystrokes;
     private int correct;
     private boolean completed;
 
-    //RandomAttempt specific
-    private String mode;
+    public LessonAttempt() {
+    }
 
-    public RandomAttempt(User user, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed, String mode) {
+    public LessonAttempt(User user, Lesson lesson, Timestamp time_start, Timestamp time_finish, int keystrokes, int correct, boolean completed) {
         this.user = user;
+        this.lesson = lesson;
         this.time_start = time_start;
         this.time_finish = time_finish;
         this.keystrokes = keystrokes;
         this.correct = correct;
         this.completed = completed;
-        this.mode = mode;
     }
 
-    public RandomAttempt() {
+    @Override
+    public int compareTo(LessonAttempt o) {
+        long this_time = this.time_finish.getTime()-this.time_start.getTime();
+        long u_time = o.time_finish.getTime()-o.time_start.getTime();
+        if (this_time<u_time) {return -1;}
+        else if (this_time>u_time) {return 1;}
+        else {return 0;}
     }
 
-    //<editor-fold desc="Getters & Setters>
+    //<editor-fold desc="Getters & Setters">
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Lesson getLesson() {
+        return lesson;
+    }
+
+    public void setLesson(Lesson lesson) {
+        this.lesson = lesson;
     }
 
     public Timestamp getTime_start() {
@@ -85,14 +99,7 @@ public class RandomAttempt /*extends Attempt*/{
         this.completed = completed;
     }
 
-    public String getMode() {
-        return mode;
-    }
 
-    public void setMode(String mode) {
-        this.mode = mode;
-    }
     //</editor-fold>
+
 }
-
-

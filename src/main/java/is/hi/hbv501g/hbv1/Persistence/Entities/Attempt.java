@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
-
+//TODO: implement attempt interface
 public interface Attempt {
     /*
     @Id

@@ -1,5 +1,10 @@
 package is.hi.hbv501g.hbv1.Services.Implementations;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Relationship;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
@@ -16,12 +21,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service @Slf4j @RequiredArgsConstructor @Transactional
 //Extenda userDetails service fyrir security reasons
@@ -32,6 +42,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     private final RelationshipRepository relationshipRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * saves a user to the database
+     * @param user the user to save
+     * @return the user with its newly generated id
+     */
     @Override
     public User saveUser(User user) {
         log.info("Saved new user {} to the database", user.getUsername());
@@ -39,17 +54,32 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return userRepository.save(user);
     }
 
+    /**
+     * Find a user by username
+     * @param username the username to search by
+     * @return the user
+     */
     @Override
     public User getUser(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Saves a new role to database
+     * @param role the role to be saved
+     * @return the role
+     */
     @Override
     public Role saveRole(Role role) {
         log.info("Saving new role {} to the database", role.getName());
         return roleRepository.save(role);
     }
 
+    /**
+     * Gives a user a role
+     * @param username the user to be given a role
+     * @param roleName the role to be given to the user
+     */
     @Override
     public void addRoleToUser(String username, String roleName) {
         User user = userRepository.findByUsername(username);
@@ -59,27 +89,17 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         userRepository.save(user);
     }
 
+    /**
+     * deletes a user
+     * @param user the user to be deleted
+     */
     @Override
     public void delete(User user) {
         userRepository.delete(user);
     }
-    //TODO græja equals
+
     @Override
     public User changePassword(long user_id, String newPassword) {
-//        Sorry braut þetta alveg frikki, kv. Valdi
-
-//        System.out.println(user_id);
-//        User user = this.findById(user_id);
-//        System.out.println(loggedIn.getUsername());
-//        System.out.println(user.getUsername());
-//        if (loggedIn.equal(user)) {
-//            userRepository.delete(user);
-//            user.setPassword(newPassword);
-//            User newUser = userRepository.save(user);
-//            loggedIn = newUser;
-//            return newUser;
-//        }
-//        System.out.println("Ekki sami loggaður inn og reynt að breyta lykilorði");
         return null;
     }
 
@@ -93,11 +113,64 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return null;
     }
 
+    /**
+     * Find a user by his id
+     * @param id the id of the user
+     * @return the user
+     */
     @Override
     public User findById(long id) {
         return userRepository.findById(id);
     }
 
+    @Override
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("I am in the refreshToken method");
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                String refreshToken =  authorizationHeader.substring("Bearer ".length());
+                log.info("Refresh token {}", refreshToken);
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes()); //TODO: refactor secret
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(refreshToken);
+                String username = decodedJWT.getSubject(); //This http request only has the token
+                User user = getUser(username);
+
+                String accessToken = JWT.create()
+                        .withSubject(user.getUsername())
+                        .withExpiresAt(new Date(System.currentTimeMillis() + (10 * 60 * 1000))) //access Token expires in 10 minutes
+                        .withIssuer(request.getRequestURL().toString())
+                        .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                        .sign(algorithm);
+
+                Map<String,String> tokens = new HashMap<>();
+                tokens.put("accessToken", accessToken);
+                tokens.put("refreshToken", refreshToken);
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+            } catch (Exception e){
+                log.error("Error logging in: {}", e.getMessage());
+                response.setHeader("error", e.getMessage());
+                response.setStatus(FORBIDDEN.value());
+
+                //This sets the response content type to application json
+                //and returns a json with the error message
+                Map<String,String> error = new HashMap<>();
+                error.put("errorMessage",e.getMessage());
+                response.setContentType(APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), error);
+            }
+        } else {
+            throw new RuntimeException("Refresh token is missing");
+        }
+    }
+
+    /**
+     * Checks if user exists in database
+     * @param user the user in question
+     * @return true if he exists, false otherwise
+     */
     private boolean exists(User user){
         User dbUser = userRepository.findByUsername(user.getUsername());
         return !isNull(dbUser);
@@ -124,4 +197,8 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 authorities);
     }
 
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }

@@ -6,11 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -39,6 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         if( request.getServletPath().equals("/") ||
             request.getServletPath().equals("/api/login/**") ||
             request.getServletPath().equals("/api/words/**") ||
+            request.getServletPath().equals("/api/quotes/**") ||
             request.getServletPath().equals("/api/token/refresh")) {
             filterChain.doFilter(request,response);
         } else {

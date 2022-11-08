@@ -9,12 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * An entity made for storing information about users role in our application and is used to restrict access to certain features
+ */
 @Entity @Data @AllArgsConstructor @NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private String name;
     public Long getId() {
         return id;
     }
@@ -31,5 +35,4 @@ public class Role {
         this.name = name;
     }
 
-    private String name;
 }
