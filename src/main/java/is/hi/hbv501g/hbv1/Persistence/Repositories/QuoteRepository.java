@@ -12,6 +12,7 @@ public interface QuoteRepository extends JpaRepository<Quote,Long> {
     List<Quote> findAllByDailyTrue();
     List<Quote> findAllByAcceptedTrue();
     List<Quote> findAllByAcceptedTrueAndDailyFalseAndLanguage(Lang lang);
+    List<Quote> findAllByDailyFalseAndLanguage(Lang lang);
     Quote save(Quote quote);
 
 }

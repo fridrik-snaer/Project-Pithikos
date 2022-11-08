@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,8 +60,25 @@ public class TypingController {
      */
     @CrossOrigin
     @RequestMapping(value="/quotes/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
+    public List<Quote> getQuotesByLanguageAccepted(@PathVariable String lang) {
         return typingService.getQuotes(Lang.valueOf(lang));
+    }
+
+    /**
+     * A method to fetch quotes for the typing game based on language
+     * @param lang specifies the language of the requested quotes
+     * @return returns all words in specified language
+     */
+    @CrossOrigin
+    @RequestMapping(value="/quotesWithNonAcc/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Quote> getQuotesByLanguage(@PathVariable String lang) {
+        return typingService.getQuotesWithNonAcc(Lang.valueOf(lang));
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="/deleteQuote", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public void deleteQuote(@RequestBody Quote quote) {
+        typingService.deleteQuote(quote);
     }
 
     /**
@@ -72,6 +90,16 @@ public class TypingController {
     @RequestMapping(value="/getDailyQuote/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public Quote getDailyChallengeByLanguage(@PathVariable String lang) {
         return typingService.getDailyChallenge(Lang.valueOf(lang));
+    }
+
+    /**
+     * A way to submit quotes, quote object preferrably includes text, language and origin
+     * @param quote The quote to be submitted
+     */
+    @CrossOrigin
+    @RequestMapping(value="/submitQuote", method= RequestMethod.POST, consumes = "application/json;charset=UTF-8")
+    public void submitQuote(@RequestBody Quote quote) {
+        typingService.submitQuote(quote);
     }
 
     //Temporary classes used for enpoint displaying
