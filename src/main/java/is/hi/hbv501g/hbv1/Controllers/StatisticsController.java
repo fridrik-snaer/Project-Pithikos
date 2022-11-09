@@ -43,9 +43,15 @@ public class StatisticsController {
         return attempts;
     }
 
+    @CrossOrigin
+    @RequestMapping(value="/users/leaderboard/get",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Stats> getLeaderboardOfUsers(){
+        return statisticsService.getLeaderBoardOfUsers();
+    }
+
     /**
      * Adds an attempt by a user on a quote to the database, also results in an update of user statistics
-     * @param quoteAttempt attempt to be saved in the database, must include id of quote and user
+     * @param quoteAttempt attempt to be saved in the database, must include id of quote and username of user
      * @return Attempt with its newly generated id
      */
     @CrossOrigin
@@ -54,7 +60,7 @@ public class StatisticsController {
         //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
         //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
-        quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
+        quoteAttempt.setUser(userService.findByUsername(quoteAttempt.getUser().getUsername()));
         //Bara beint kall síðan
         return statisticsService.addQuoteAttempt(quoteAttempt);
     }
@@ -69,8 +75,18 @@ public class StatisticsController {
     public RandomAttempt addRandomAttempt(@RequestBody RandomAttempt randomAttempt){
         //Fáum notenda sem hefur bara id og notum það til að sækja alla upplýsingar
         //Svo það þurfi ekki allar upplýsingar um user að fara á milli bak- og framenda
-        randomAttempt.setUser(userService.findById(randomAttempt.getUser().getId()));
+        randomAttempt.setUser(userService.findByUsername(randomAttempt.getUser().getUsername()));
         return statisticsService.addRandomAttempt(randomAttempt);
+    }
+
+    @CrossOrigin
+    @RequestMapping (value="/lessons/addAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public LessonAttempt addLessonAttempt(@RequestBody LessonAttempt lessonAttempt){
+        lessonAttempt.setLesson(typingService.getLessonByID(lessonAttempt.getLesson().getId()));
+        System.out.println("Þetta er lesson id: " + lessonAttempt.getLesson().getId());
+        lessonAttempt.setUser(userService.findByUsername(lessonAttempt.getUser().getUsername()));
+        //Bara beint kall síðan
+        return statisticsService.addLessonAttempt(lessonAttempt);
     }
 
     /**
@@ -85,7 +101,7 @@ public class StatisticsController {
         //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         for (QuoteAttempt quoteAttempt: quoteAttempts) {
             quoteAttempt.setQuote(typingService.getQuoteById(quoteAttempt.getQuote().getId()));
-            quoteAttempt.setUser(userService.findById(quoteAttempt.getUser().getId()));
+            quoteAttempt.setUser(userService.findByUsername(quoteAttempt.getUser().getUsername()));
         }
         return statisticsService.addQuoteAttempts(quoteAttempts);
     }
@@ -112,8 +128,16 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping (value="/getStatisticsOfUser", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public Stats getStatisticsOfUser(@RequestBody User user){
-        userService.findById(user.getId());
+        userService.findByUsername(user.getUsername());
         return statisticsService.getStatisticsOfUser(user);
+    }
+
+    @CrossOrigin
+    @RequestMapping (value="/lessons/getUserCompleted/{lang}", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Lesson> getUsersLessonsCompleted(@RequestBody User user,@PathVariable String lang){
+        Lang language = Lang.valueOf(lang);
+        User user1 = userService.findByUsername(user.getUsername());
+        return statisticsService.getUsersLessonsCompleted(user1,language);
     }
 
 }

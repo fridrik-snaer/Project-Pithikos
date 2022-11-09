@@ -1,0 +1,10 @@
+Insert into lessons(text,lang,lvl,description) Values('fffff jjjjj fffjjj ffjjffjj fjfjfj',0,1,'Nú skulum við byrja á höfuðlyklunum');
+Insert into lessons(text,lang,lvl,description) Values('ddddd kkkkk dddkkk ddkkddkk dkdkdk',0,2,'Skoðum d og k');
+Insert into lessons(text,lang,lvl,description) Values('sssss lllll ssslll ssllssll slslsl',0,3,'Skoðum s og l');
+Insert into lessons(text,lang,lvl,description) Values('aaaaa æææææ aaaæææ aaææaaææ aæaæaæ',0,4,'Skoðum a og æ');
+Insert into lessons(text,lang,lvl,description) Values('ggggg hhhhh ggghhh gghhgghh ghghgh',0,5,'Skoðum g og h');
+Insert into lessons(text,lang,lvl,description) Values('ttttt yyyyy tttyyy ttyyttyy tytyty',0,6,'Skoðum t og y');
+Insert into lessons(text,lang,lvl,description) Values('rrrrr uuuuu rrruuu rruurruu rururu',0,7,'Skoðum r og u');
+Insert into lessons(text,lang,lvl,description) Values('eeeee iiiii eeeiii eeiieeii eieiei',0,8,'Skoðum d og k');
+Insert into lessons(text,lang,lvl,description) Values('wwwww ooooo wwwooo wwoowwoo wowowo',0,9,'Skoðum w og o');
+Insert into lessons(text,lang,lvl,description) Values('qqqqq ppppp qqqppp qqppqqpp qpqpqp',0,10,'Skoðum q og p');

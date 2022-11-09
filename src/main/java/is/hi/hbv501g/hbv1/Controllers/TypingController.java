@@ -1,6 +1,7 @@
 package is.hi.hbv501g.hbv1.Controllers;
 
 import is.hi.hbv501g.hbv1.Persistence.Entities.Lang;
+import is.hi.hbv501g.hbv1.Persistence.Entities.Lesson;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
 import is.hi.hbv501g.hbv1.Services.TypingService;
@@ -76,7 +77,7 @@ public class TypingController {
     }
 
     @CrossOrigin
-    @RequestMapping(value="/deleteQuote", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/deleteQuote", method= RequestMethod.POST, consumes = "application/json;charset=UTF-8")
     public void deleteQuote(@RequestBody Quote quote) {
         typingService.deleteQuote(quote);
     }
@@ -92,6 +93,12 @@ public class TypingController {
         return typingService.getDailyChallenge(Lang.valueOf(lang));
     }
 
+    @CrossOrigin
+    @RequestMapping(value="/lessons/getByLanguage/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public List<Lesson> getLessonsByLanguage(@PathVariable String lang) {
+        return typingService.getLessonsByLanguage(Lang.valueOf(lang));
+    }
+
     /**
      * A way to submit quotes, quote object preferrably includes text, language and origin
      * @param quote The quote to be submitted
@@ -101,6 +108,8 @@ public class TypingController {
     public void submitQuote(@RequestBody Quote quote) {
         typingService.submitQuote(quote);
     }
+
+
 
     //Temporary classes used for enpoint displaying
     //TODO: replace these with a HashMap

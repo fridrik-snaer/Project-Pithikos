@@ -4,6 +4,7 @@ import is.hi.hbv501g.hbv1.Persistence.Entities.Lang;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Lesson;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Quote;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Word;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.LessonRepository;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteRepository;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.WordRepository;
 import is.hi.hbv501g.hbv1.Services.TypingService;
@@ -17,14 +18,16 @@ import java.util.List;
 public class TypingServiceImplementation implements TypingService {
     private WordRepository wordRepository;
     private QuoteRepository quoteRepository;
+    private LessonRepository lessonRepository;
     private final long millisInDay = 86400000L;
     private final long the_first_day_millis = 1666457121515L;
     private Timestamp theFirstDay = new Timestamp(the_first_day_millis);
 
     @Autowired
-    public TypingServiceImplementation(WordRepository wordRepository,QuoteRepository quoteRepository) {
+    public TypingServiceImplementation(WordRepository wordRepository,QuoteRepository quoteRepository,LessonRepository lessonRepository) {
         this.wordRepository = wordRepository;
         this.quoteRepository = quoteRepository;
+        this.lessonRepository = lessonRepository;
     }
 
     /**
@@ -111,6 +114,17 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public void deleteQuote(Quote quote) {
-        quoteRepository.delete(quote);
+        Quote quote1 = getQuoteById(quote.getId());
+        quoteRepository.delete(quote1);
+    }
+
+    @Override
+    public Lesson getLessonByID(long id) {
+        return lessonRepository.findById(id);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByLanguage(Lang lang) {
+        return lessonRepository.findAllByLang(lang);
     }
 }

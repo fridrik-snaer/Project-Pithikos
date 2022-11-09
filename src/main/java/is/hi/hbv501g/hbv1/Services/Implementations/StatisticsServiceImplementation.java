@@ -1,10 +1,7 @@
 package is.hi.hbv501g.hbv1.Services.Implementations;
 
 import is.hi.hbv501g.hbv1.Persistence.Entities.*;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteAttemptRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.QuoteRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RandomAttemptRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.StatsRepository;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.*;
 import is.hi.hbv501g.hbv1.Services.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,17 +16,19 @@ public class StatisticsServiceImplementation implements StatisticsService {
     private final int LeaderboardLength = 10;
     private final float KeystrokesPerWord = (float)5.156;
     private final int AttemptsToAccept = 10;
-    private StatsRepository statsRepository;
-    private QuoteAttemptRepository quoteAttemptRepository;
-    private RandomAttemptRepository randomAttemptRepository;
-    private QuoteRepository quoteRepository;
+    private final StatsRepository statsRepository;
+    private final QuoteAttemptRepository quoteAttemptRepository;
+    private final RandomAttemptRepository randomAttemptRepository;
+    private final LessonAttemptRepository lessonAttemptRepository;
+    private final QuoteRepository quoteRepository;
 
     @Autowired
-    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository) {
+    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
         this.statsRepository = statsRepository;
         this.quoteAttemptRepository = quoteAttemptRepository;
         this.randomAttemptRepository = randomAttemptRepository;
         this.quoteRepository = quoteRepository;
+        this.lessonAttemptRepository = lessonAttemptRepository;
     }
 
     /**
@@ -83,6 +82,13 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return quoteAttemptList;
     }
 
+    @Override
+    public LessonAttempt addLessonAttempt(LessonAttempt lessonAttempt) {
+        LessonAttempt l = lessonAttemptRepository.save(lessonAttempt);
+        l.getUser().clear();
+        return l;
+    }
+
     /**
      * Returns the leaderboard for a quote in regard to speed
      * @param quote_id Id of quote in question
@@ -102,6 +108,12 @@ public class StatisticsServiceImplementation implements StatisticsService {
             ret.add(qa.get(i));
         }
         return ret;
+    }
+
+    @Override
+    public List<Stats> getLeaderBoardOfUsers() {
+        //return null;
+        return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
     }
 
     /**
@@ -195,21 +207,21 @@ public class StatisticsServiceImplementation implements StatisticsService {
             return stats;
         }
         Stats stats = statsRepository.findByUser(user);
-        //Uppfæra avg_wpm
-        float old_avg_wpm = stats.getAvg_wpm();
-        float new_avg_wpm = (old_avg_wpm*(float)stats.getTests_completed()+wpm)/(float)(stats.getTests_completed()+1);
-        System.out.println(new_avg_wpm);
-        stats.setAvg_wpm(new_avg_wpm);
+        //Uppfæra avgWpm
+        float old_avgWpm = stats.getAvgWpm();
+        float new_avgWpm = (old_avgWpm*(float)stats.getTestsCompleted()+wpm)/(float)(stats.getTestsCompleted()+1);
+        System.out.println(new_avgWpm);
+        stats.setAvgWpm(new_avgWpm);
         //Uppfæra avg_acc
-        float old_avg_acc = stats.getAvg_acc();
-        float new_avg_acc = (old_avg_acc*(float)stats.getTests_completed()+acc)/(float)(stats.getTests_completed()+1);
-        stats.setAvg_acc(new_avg_acc);
+        float old_avg_acc = stats.getAvgAcc();
+        float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
+        stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
         if (quoteAttempt.isCompleted()){
-            stats.setTests_completed(stats.getTests_completed()+1);
+            stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
-        stats.setTests_taken(stats.getTests_taken()+1);
+        stats.setTestsTaken(stats.getTestsTaken()+1);
         //Breytum gamla í nýja
         statsRepository.delete(statsRepository.findByUser(user));
         statsRepository.save(stats);
@@ -220,7 +232,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
     /**
      * Updates the stats of a user in regard to a new random attempt
      * @param user the user whose stats need updating
-     * @param quoteAttempt the randomattempt which needs to update according to
+     * @param randomAttempt the randomattempt which needs to update according to
      * @return the updated stats
      */
     @Override
@@ -240,21 +252,21 @@ public class StatisticsServiceImplementation implements StatisticsService {
             return stats;
         }
         Stats stats = statsRepository.findByUser(user);
-        //Uppfæra avg_wpm
-        float old_avg_wpm = stats.getAvg_wpm();
-        float new_avg_wpm = (old_avg_wpm*(float)stats.getTests_completed()+wpm)/(float)(stats.getTests_completed()+1);
-        System.out.println(new_avg_wpm);
-        stats.setAvg_wpm(new_avg_wpm);
+        //Uppfæra avgWpm
+        float old_avgWpm = stats.getAvgWpm();
+        float new_avgWpm = (old_avgWpm*(float)stats.getTestsCompleted()+wpm)/(float)(stats.getTestsCompleted()+1);
+        System.out.println(new_avgWpm);
+        stats.setAvgWpm(new_avgWpm);
         //Uppfæra avg_acc
-        float old_avg_acc = stats.getAvg_acc();
-        float new_avg_acc = (old_avg_acc*(float)stats.getTests_completed()+acc)/(float)(stats.getTests_completed()+1);
-        stats.setAvg_acc(new_avg_acc);
+        float old_avg_acc = stats.getAvgAcc();
+        float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
+        stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
         if (!randomAttempt.isCompleted()){
-            stats.setTests_completed(stats.getTests_completed()+1);
+            stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
-        stats.setTests_taken(stats.getTests_taken()+1);
+        stats.setTestsTaken(stats.getTestsTaken()+1);
         //Breytum gamla í nýja
         statsRepository.delete(statsRepository.findByUser(user));
         statsRepository.save(stats);
@@ -269,5 +281,19 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public List<Stats> getAllStats() {
         return statsRepository.findAll();
+    }
+
+    @Override
+    public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
+        List<Lesson> lessons = new ArrayList<>();
+        List<LessonAttempt> attempts = lessonAttemptRepository.findByUserAndLessonLang(user,lang);
+        if (attempts.size()==0){return null;}
+        for (LessonAttempt la: attempts) {
+            Lesson l = la.getLesson();
+            if (!lessons.contains(l)){
+                lessons.add(l);
+            }
+        }
+        return lessons;
     }
 }
