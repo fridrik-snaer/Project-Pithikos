@@ -7,8 +7,8 @@ import java.sql.Timestamp;
  * An entity for storing information about the friendship relation between two users
  */
 @Entity
-@Table(name = "relationships")
-public class Relationship {
+@Table(name = "friendships")
+public class Friendship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ID;
@@ -18,13 +18,13 @@ public class Relationship {
     private User reciever;
     private Timestamp created_at;
 
-    public Relationship(User sender, User reciever) {
+    public Friendship(User sender, User reciever) {
         this.sender = sender;
         this.reciever = reciever;
         this.created_at = new Timestamp(System.currentTimeMillis());
     }
 
-    public Relationship() {
+    public Friendship() {
     }
     //<editor-fold desc="Getters & Setters>
 

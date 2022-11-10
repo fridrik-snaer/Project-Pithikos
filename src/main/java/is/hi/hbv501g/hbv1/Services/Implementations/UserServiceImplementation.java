@@ -5,10 +5,12 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Relationship;
+import is.hi.hbv501g.hbv1.Persistence.Entities.FriendRequest;
+import is.hi.hbv501g.hbv1.Persistence.Entities.Friendship;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RelationshipRepository;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.FriendRequestRepository;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.FriendshipRepository;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.RoleRepository;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.UserRepository;
 import is.hi.hbv501g.hbv1.Services.UserService;
@@ -39,7 +41,8 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    private final RelationshipRepository relationshipRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -109,7 +112,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     }
 
     @Override
-    public Relationship makeRelationship(User sender, User reciever) {
+    public Friendship makeRelationship(User sender, User reciever) {
         return null;
     }
 
@@ -201,5 +204,26 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public FriendRequest sendFriendRequest(FriendRequest friendRequest) {
+        User sender = findByUsername(friendRequest.getRequestSender().getUsername());
+        User reciever = findByUsername(friendRequest.getRequestReciever().getUsername());
+        if (isNull(reciever)){
+            System.out.println("Reciever not found");
+            return null;
+        }
+        if (isNull(sender)){
+            System.out.println("Sender not found");
+            return null;
+        }
+        if (sender.getUsername().equals(reciever.getUsername())){
+            System.out.println("Not possible to send yourself friendrequest");
+            return null;
+        }
+        FriendRequest toSave = new FriendRequest(sender,reciever);
+        friendRequestRepository.save(toSave);
+        return toSave;
     }
 }

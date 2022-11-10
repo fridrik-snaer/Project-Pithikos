@@ -1,5 +1,6 @@
 package is.hi.hbv501g.hbv1.Controllers;
 
+import is.hi.hbv501g.hbv1.Persistence.Entities.FriendRequest;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
 import is.hi.hbv501g.hbv1.Services.UserService;
@@ -63,5 +64,16 @@ public class UserController {
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("Refresh controller");
         userService.refreshToken(request,response);
+    }
+
+    @CrossOrigin
+    @RequestMapping(value="/api/friends/sendRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<FriendRequest> sendFriendRequest(@RequestBody FriendRequest friendRequest){
+        FriendRequest friendRequest1 = userService.sendFriendRequest(friendRequest);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/friends/sendRequest").toUriString());
+        if (isNull(friendRequest1)){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.created(uri).body(friendRequest1);
     }
 }
