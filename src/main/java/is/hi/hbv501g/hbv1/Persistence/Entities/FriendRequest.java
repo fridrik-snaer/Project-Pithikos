@@ -7,41 +7,46 @@ import java.sql.Timestamp;
  * An entity for storing information about the friendship relation between two users
  */
 @Entity
-@Table(name = "friendships")
-public class Friendship {
+@Table(name = "friendRequests")
+public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
+    private long id;
     @ManyToOne(fetch = FetchType.EAGER)
-    private User sender;
+    private User requestSender;
     @ManyToOne(fetch = FetchType.EAGER)
-    private User reciever;
+    private User requestReciever;
     private Timestamp created_at;
 
-    public Friendship(User sender, User reciever) {
-        this.sender = sender;
-        this.reciever = reciever;
+    public FriendRequest(User sender, User requestReciever) {
+        this.requestSender = sender;
+        this.requestReciever = requestReciever;
         this.created_at = new Timestamp(System.currentTimeMillis());
     }
 
-    public Friendship() {
+    public FriendRequest() {
     }
     //<editor-fold desc="Getters & Setters>
 
-    public User getSender() {
-        return sender;
+
+    public long getId() {
+        return id;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public User getRequestSender() {
+        return requestSender;
     }
 
-    public User getReciever() {
-        return reciever;
+    public void setRequestSender(User requestSender) {
+        this.requestSender = requestSender;
     }
 
-    public void setReciever(User reciever) {
-        this.reciever = reciever;
+    public User getRequestReciever() {
+        return requestReciever;
+    }
+
+    public void setRequestReciever(User requestReciever) {
+        this.requestReciever = requestReciever;
     }
 
     public Timestamp getCreated_at() {

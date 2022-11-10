@@ -1,9 +1,6 @@
 package is.hi.hbv501g.hbv1.Services;
 
-import is.hi.hbv501g.hbv1.Persistence.Entities.FriendRequest;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Friendship;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
-import is.hi.hbv501g.hbv1.Persistence.Entities.User;
+import is.hi.hbv501g.hbv1.Persistence.Entities.*;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +20,19 @@ public interface UserService {
     User changePassword(long user_id, String newPassword);
     List<User> getFriends(User user);
     Friendship makeRelationship(User sender, User reciever);
-    User findById(long id);
-
     void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
     User findByUsername(String username);
 
     FriendRequest sendFriendRequest(FriendRequest friendRequest);
+
+    Friendship acceptRequest(FriendRequest friendRequest);
+
+    FriendRequest declineRequest(FriendRequest friendRequest);
+
+    List<FriendRequest> getIncomingRequests(User user);
+
+    List<FriendRequest> getOutgoingRequests(User user);
+
+    List<Stats> getFriendsStats(User user);
 }

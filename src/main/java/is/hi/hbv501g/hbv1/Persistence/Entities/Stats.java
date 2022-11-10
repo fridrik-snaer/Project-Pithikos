@@ -42,6 +42,11 @@ public class Stats {
 //    </editor-fold>
 
 //<editor-fold desc="Getters & Setters">
+
+    public User getUser() {
+        return user;
+    }
+
     public float getAvgWpm() {
         return avgWpm;
     }

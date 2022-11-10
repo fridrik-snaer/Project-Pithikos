@@ -10,4 +10,6 @@ public interface FriendshipRepository extends JpaRepository<Friendship,Long> {
     List<Friendship> findBySender(User sender);
     List<Friendship> findByReciever(User reciever);
     Friendship save(Friendship friendship);
+    List<Friendship> findAllBySender_UsernameAndReciever_Username(String sUsername, String rUsername);
+    List<Friendship> findAllBySenderOrReciever(User sender, User reciever);
 }

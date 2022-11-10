@@ -5,14 +5,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import is.hi.hbv501g.hbv1.Persistence.Entities.FriendRequest;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Friendship;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
-import is.hi.hbv501g.hbv1.Persistence.Entities.User;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.FriendRequestRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.FriendshipRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RoleRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.UserRepository;
+import is.hi.hbv501g.hbv1.Persistence.Entities.*;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.*;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserServiceImplementation implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
+    private final StatsRepository statsRepository;
     private final FriendshipRepository friendshipRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final PasswordEncoder passwordEncoder;
@@ -108,22 +102,41 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
     @Override
     public List<User> getFriends(User user) {
-        return null;
+        System.out.println(user.getUsername());
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            System.out.println("No user with this username");
+            return null;
+        }
+        List<Friendship> friendships = friendshipRepository.findAllBySenderOrReciever(user,user);
+        List<User> friends = new ArrayList<>();
+        for (Friendship f:friendships) {
+            if (f.getSender().equals(user)){
+                friends.add(f.getReciever());
+            }
+            else friends.add(f.getSender());
+        }
+        return friends;
+    }
+
+    @Override
+    public List<Stats> getFriendsStats(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            System.out.println("No user with this username");
+            return null;
+        }
+        List<User> friends = getFriends(user);
+        List<Stats> friendsStats = new ArrayList<>();
+        for (User friend:friends) {
+            friendsStats.add(statsRepository.findByUser(friend));
+        }
+        return friendsStats;
     }
 
     @Override
     public Friendship makeRelationship(User sender, User reciever) {
         return null;
-    }
-
-    /**
-     * Find a user by his id
-     * @param id the id of the user
-     * @return the user
-     */
-    @Override
-    public User findById(long id) {
-        return userRepository.findById(id);
     }
 
     @Override
@@ -222,8 +235,73 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
             System.out.println("Not possible to send yourself friendrequest");
             return null;
         }
+        if (friendshipExists(new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever()))){
+            System.out.println("Friendship already exists");
+            return null;
+        }
+        if (friendRequestExists(friendRequest)){
+            System.out.println("Friend request already exists");
+            return null;
+        }
         FriendRequest toSave = new FriendRequest(sender,reciever);
         friendRequestRepository.save(toSave);
         return toSave;
+    }
+
+    private boolean friendshipExists(Friendship friendship){
+        List<Friendship> s = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getSender().getUsername(),friendship.getReciever().getUsername());
+        if (s.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+    private boolean friendRequestExists(FriendRequest friendRequest){
+        List<FriendRequest> r = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestSender().getUsername(),friendRequest.getRequestReciever().getUsername());
+        if (r.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Friendship acceptRequest(FriendRequest friendRequest) {
+        System.out.println(friendRequest.getId());
+        friendRequest = friendRequestRepository.findById(friendRequest.getId());
+        if (isNull(friendRequest)){
+            System.out.println("No request with this id");
+            return null;
+        }
+        friendRequestRepository.delete(friendRequest);
+        Friendship friendship = new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever());
+        friendshipRepository.save(friendship);
+        return friendship;
+    }
+
+    @Override
+    public FriendRequest declineRequest(FriendRequest friendRequest) {
+        friendRequest = friendRequestRepository.findById(friendRequest.getId());
+        if (isNull(friendRequest)){
+            return null;
+        }
+        friendRequestRepository.delete(friendRequest);
+        return friendRequest;
+    }
+
+    @Override
+    public List<FriendRequest> getIncomingRequests(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            return null;
+        }
+        return friendRequestRepository.findAllByRequestReciever(user);
+    }
+
+    @Override
+    public List<FriendRequest> getOutgoingRequests(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            return null;
+        }
+        return friendRequestRepository.findAllByRequestSender(user);
     }
 }
