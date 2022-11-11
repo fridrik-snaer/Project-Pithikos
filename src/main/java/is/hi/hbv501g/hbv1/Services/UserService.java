@@ -1,6 +1,7 @@
 package is.hi.hbv501g.hbv1.Services;
 
 import is.hi.hbv501g.hbv1.Persistence.Entities.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,8 @@ public interface UserService {
     User findByUsername(String username);
 
     FriendRequest sendFriendRequest(FriendRequest friendRequest);
+
+    ResponseEntity<FriendRequest> sendFriendRequestVol2(FriendRequest friendRequest);
 
     Friendship acceptRequest(FriendRequest friendRequest);
 

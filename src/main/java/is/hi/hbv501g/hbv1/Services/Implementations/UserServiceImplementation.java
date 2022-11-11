@@ -10,17 +10,22 @@ import is.hi.hbv501g.hbv1.Persistence.Repositories.*;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -247,17 +252,48 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         friendRequestRepository.save(toSave);
         return toSave;
     }
+    @Override
+    public ResponseEntity sendFriendRequestVol2(FriendRequest friendRequest) {
+        User sender = findByUsername(friendRequest.getRequestSender().getUsername());
+        User reciever = findByUsername(friendRequest.getRequestReciever().getUsername());
+        if (isNull(reciever)){
+            System.out.println("Reciever not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Reciever not found\"}");
+        }
+        if (isNull(sender)){
+            System.out.println("Sender not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Sender not found\"}");
+        }
+        if (sender.getUsername().equals(reciever.getUsername())){
+            System.out.println("Not possible to send yourself friendrequest");
+            return ResponseEntity.status(FORBIDDEN).body("{\"error\":\"Not possible to send yourself friendrequest\"}");
+        }
+        if (friendshipExists(new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever()))){
+            System.out.println("Friendship already exists");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friendship already exists\"}");
+        }
+        if (friendRequestExists(friendRequest)){
+            System.out.println("Friend request already exists");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friend request already exists\"}");
+        }
+        FriendRequest toSave = new FriendRequest(sender,reciever);
+        friendRequestRepository.save(toSave);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/friends/sendRequest").toUriString());
+        return ResponseEntity.created(uri).body(toSave);
+    }
 
     private boolean friendshipExists(Friendship friendship){
-        List<Friendship> s = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getSender().getUsername(),friendship.getReciever().getUsername());
-        if (s.isEmpty()){
+        List<Friendship> f1 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getSender().getUsername(),friendship.getReciever().getUsername());
+        List<Friendship> f2 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getReciever().getUsername(),friendship.getSender().getUsername());
+        if (f1.isEmpty() && f2.isEmpty()){
             return false;
         }
         return true;
     }
     private boolean friendRequestExists(FriendRequest friendRequest){
-        List<FriendRequest> r = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestSender().getUsername(),friendRequest.getRequestReciever().getUsername());
-        if (r.isEmpty()){
+        List<FriendRequest> r1 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestSender().getUsername(),friendRequest.getRequestReciever().getUsername());
+        List<FriendRequest> r2 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestReciever().getUsername(),friendRequest.getRequestSender().getUsername());
+        if (r1.isEmpty() && r2.isEmpty()){
             return false;
         }
         return true;
