@@ -1,9 +1,14 @@
 package is.hi.hbv501g.hbv1.Controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import is.hi.hbv501g.hbv1.Persistence.Entities.*;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +21,7 @@ import java.net.URI;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 /**
  * Handles user related endpoints and token refreshing
@@ -96,12 +102,12 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/friends/acceptRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Friendship> acceptRequest(@RequestBody FriendRequest friendRequest){
+    public ResponseEntity acceptRequest(@RequestBody FriendRequest friendRequest){
         System.out.println("Tried to accept request");
         Friendship friendship = userService.acceptRequest(friendRequest);
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/friends/acceptRequest").toUriString());
         if (isNull(friendship)){
-            return ResponseEntity.unprocessableEntity().body(null);
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         friendship.getReciever().clear();
         friendship.getSender().clear();
@@ -114,7 +120,7 @@ public class UserController {
         System.out.println("Tried to decline request");
         friendRequest = userService.declineRequest(friendRequest);
         if (isNull(friendRequest)){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         friendRequest.getRequestReciever().clear();
         friendRequest.getRequestSender().clear();
@@ -123,11 +129,11 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/friends/getIncomingRequests",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FriendRequest>> getIncomingRequests(@RequestBody User user){
+    public ResponseEntity getIncomingRequests(@RequestBody User user){
         System.out.println("Tried to get incoming friend requests");
         List<FriendRequest> friendRequests = userService.getIncomingRequests(user);
         if (isNull(friendRequests)){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         for (FriendRequest f:friendRequests) {
             f.getRequestSender().clear();
@@ -138,11 +144,11 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/friends/getOutgoingRequests",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<FriendRequest>> getOutgoingRequests(@RequestBody User user){
+    public ResponseEntity getOutgoingRequests(@RequestBody User user){
         System.out.println("Tried to get outgoing friend requests");
         List<FriendRequest> friendRequests = userService.getOutgoingRequests(user);
         if (isNull(friendRequests)){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         for (FriendRequest f:friendRequests) {
             f.getRequestSender().clear();
@@ -153,29 +159,51 @@ public class UserController {
 
     @CrossOrigin
     @RequestMapping(value = "/friends/getFriends",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<User>> getFriends(@RequestBody User user){
+    public ResponseEntity getFriends(HttpServletRequest request){
+        String username = getUsername(request);
+        System.out.println(username);
+        User user = new User();
+        user.setUsername(username);
         System.out.println("Tried to get friends of user");
         List<User> friends = userService.getFriends(user);
         if (isNull(friends)){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         for (User f:friends) {
-            f.clear();
             f.clear();
         }
         return ResponseEntity.ok().body(friends);
     }
 
+    private static String getUsername(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String username = "";
+        //TODO: skoða hvort það sé hægt að gera startsWith("Bearer ") betur
+        if(authorizationHeader != null && authorizationHeader.startsWith("Frik ")) {
+            try {
+                //Decode jwt token and add authorities to SecurityContextHolder
+                String token = authorizationHeader.substring("Frik ".length());
+                System.out.println();
+                log.info("Token {}", token);
+                //TODO: refactor secret
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                username = decodedJWT.getSubject();
+            }catch(Exception e){System.out.println("Hvað í fokkanum er í gangi");}
+        }
+        return username;
+    }
+
     @CrossOrigin
     @RequestMapping(value = "/friends/getFriendsStats",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Stats>> getFriendsStats(@RequestBody User user){
+    public ResponseEntity getFriendsStats(@RequestBody User user){
         System.out.println("Tried to get stats of friends of user");
         List<Stats> friendsStats = userService.getFriendsStats(user);
         if (isNull(friendsStats)){
-            return ResponseEntity.unprocessableEntity().build();
+            return ResponseEntity.unprocessableEntity().body("{\"error\":\"User not found\"}");
         }
         for (Stats f:friendsStats) {
-            f.getUser().clear();
             f.getUser().clear();
         }
         return ResponseEntity.ok().body(friendsStats);
