@@ -21,14 +21,16 @@ public class StatisticsServiceImplementation implements StatisticsService {
     private final RandomAttemptRepository randomAttemptRepository;
     private final LessonAttemptRepository lessonAttemptRepository;
     private final QuoteRepository quoteRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
+    public StatisticsServiceImplementation(UserRepository userRepository,StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
         this.statsRepository = statsRepository;
         this.quoteAttemptRepository = quoteAttemptRepository;
         this.randomAttemptRepository = randomAttemptRepository;
         this.quoteRepository = quoteRepository;
         this.lessonAttemptRepository = lessonAttemptRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -175,6 +177,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public Stats getStatisticsOfUser(User user) {
+        user = userRepository.findByUsername(user.getUsername());
         return statsRepository.findByUser(user);
     }
 
