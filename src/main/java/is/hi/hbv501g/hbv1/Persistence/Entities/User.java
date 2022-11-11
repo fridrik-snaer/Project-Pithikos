@@ -81,6 +81,7 @@ public class User {
         return this.id == user.id;
     }
     public void clear(){
+        setPassword(null);
         setStats(null);
         setQuoteAttempts(null);
         setRandomAttempts(null);

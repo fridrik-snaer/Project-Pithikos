@@ -80,6 +80,21 @@ public class UserController {
     }
 
     @CrossOrigin
+    @RequestMapping(value="/friends/sendRequest2",consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity sendFriendRequest2(@RequestBody FriendRequest friendRequest){
+        System.out.println("Tried to send request2");
+        ResponseEntity response = userService.sendFriendRequestVol2(friendRequest);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/friends/sendRequest").toUriString());
+        if (response.getBody().getClass().equals("".getClass())){
+            return response;
+        }
+        FriendRequest friendRequest1 = (FriendRequest)response.getBody();
+        friendRequest1.getRequestReciever().clear();
+        friendRequest1.getRequestSender().clear();
+        return ResponseEntity.created(uri).header(response.getHeaders().toString()).body(friendRequest1);
+    }
+
+    @CrossOrigin
     @RequestMapping(value = "/friends/acceptRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Friendship> acceptRequest(@RequestBody FriendRequest friendRequest){
         System.out.println("Tried to accept request");
