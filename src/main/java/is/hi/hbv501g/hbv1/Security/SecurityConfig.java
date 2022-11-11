@@ -47,10 +47,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
 //        http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        //TODO: Breyta friends í user Endpoint
         //TODO: VELJA NON-VERIFIED ENDPOINTS
         http.authorizeRequests()
-            .antMatchers("/", "/api/words/**", "/api/quotes/**", "/api/login/**", "/api/refreshToken/**")
+            .antMatchers("/", "/api/words/**", "/api/quotes/**", "/api/login/**", "/api/refreshToken/**","/friends/**")
             .permitAll();
 
         //TODO: VELJA USER ENDPOINT

@@ -16,11 +16,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
     private final int LeaderboardLength = 10;
     private final float KeystrokesPerWord = (float)5.156;
     private final int AttemptsToAccept = 10;
-    private StatsRepository statsRepository;
-    private QuoteAttemptRepository quoteAttemptRepository;
-    private RandomAttemptRepository randomAttemptRepository;
-    private LessonAttemptRepository lessonAttemptRepository;
-    private QuoteRepository quoteRepository;
+    private final StatsRepository statsRepository;
+    private final QuoteAttemptRepository quoteAttemptRepository;
+    private final RandomAttemptRepository randomAttemptRepository;
+    private final LessonAttemptRepository lessonAttemptRepository;
+    private final QuoteRepository quoteRepository;
 
     @Autowired
     public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
@@ -84,7 +84,9 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public LessonAttempt addLessonAttempt(LessonAttempt lessonAttempt) {
-        return null;
+        LessonAttempt l = lessonAttemptRepository.save(lessonAttempt);
+        l.getUser().clear();
+        return l;
     }
 
     /**
@@ -110,6 +112,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
+        //return null;
         return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
     }
 
@@ -282,10 +285,14 @@ public class StatisticsServiceImplementation implements StatisticsService {
 
     @Override
     public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
-        List<Lesson> lessons = new ArrayList<Lesson>();
+        List<Lesson> lessons = new ArrayList<>();
         List<LessonAttempt> attempts = lessonAttemptRepository.findByUserAndLessonLang(user,lang);
-        for (LessonAttempt l: attempts) {
-            lessons.add(l.getLesson());
+        if (attempts.size()==0){return null;}
+        for (LessonAttempt la: attempts) {
+            Lesson l = la.getLesson();
+            if (!lessons.contains(l)){
+                lessons.add(l);
+            }
         }
         return lessons;
     }

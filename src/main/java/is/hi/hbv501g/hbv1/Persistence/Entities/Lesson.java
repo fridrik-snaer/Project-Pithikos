@@ -12,7 +12,7 @@ import java.util.List;
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long Id;
+    private long id;
     private String description;
     private String text;
     private Lang lang;
@@ -32,7 +32,7 @@ public class Lesson {
     //<editor-fold desc="Getters & Setters">
 
     public long getId() {
-        return Id;
+        return id;
     }
 
     public String getText() {

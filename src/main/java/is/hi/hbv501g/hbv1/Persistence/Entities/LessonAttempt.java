@@ -11,7 +11,7 @@ public class LessonAttempt implements Comparable<LessonAttempt>{
     private long id;
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Lesson lesson;
     private Timestamp time_start;
     private Timestamp time_finish;

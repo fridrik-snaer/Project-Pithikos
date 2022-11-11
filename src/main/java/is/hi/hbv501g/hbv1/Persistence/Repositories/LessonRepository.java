@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface LessonRepository extends JpaRepository<Lesson,Long> {
     List<Lesson> findAll();
-    Lesson findById(long Id);
+    Lesson findById(long id);
     List<Lesson> findAllByLang(Lang lang);
     Lesson findByLvlAndAndLang(int lvl,Lang lang);
     Lesson save(Lesson lesson);

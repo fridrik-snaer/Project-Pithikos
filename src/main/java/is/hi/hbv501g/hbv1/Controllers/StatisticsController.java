@@ -82,9 +82,8 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping (value="/lessons/addAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
     public LessonAttempt addLessonAttempt(@RequestBody LessonAttempt lessonAttempt){
-        //Fáum notenda og quote sem hafa bara id og notum þau til að sækja alla upplýsingar
-        //Svo það þurfi ekki allar upplýsingar um user og quote að fara á milli bak- og framenda
         lessonAttempt.setLesson(typingService.getLessonByID(lessonAttempt.getLesson().getId()));
+        System.out.println("Þetta er lesson id: " + lessonAttempt.getLesson().getId());
         lessonAttempt.setUser(userService.findByUsername(lessonAttempt.getUser().getUsername()));
         //Bara beint kall síðan
         return statisticsService.addLessonAttempt(lessonAttempt);
@@ -137,8 +136,8 @@ public class StatisticsController {
     @RequestMapping (value="/lessons/getUserCompleted/{lang}", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Lesson> getUsersLessonsCompleted(@RequestBody User user,@PathVariable String lang){
         Lang language = Lang.valueOf(lang);
-        userService.findByUsername(user.getUsername());
-        return statisticsService.getUsersLessonsCompleted(user,language);
+        User user1 = userService.findByUsername(user.getUsername());
+        return statisticsService.getUsersLessonsCompleted(user1,language);
     }
 
 }
