@@ -115,7 +115,12 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
-        return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
+        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
+        int leaderboard = Math.max(stats.size(),LeaderboardLength);
+        for (Stats s: stats) {
+            s.getUser().clear();
+        }
+        return stats.subList(0,leaderboard);
     }
 
     /**
@@ -178,7 +183,9 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public Stats getStatisticsOfUser(User user) {
         user = userRepository.findByUsername(user.getUsername());
-        return statsRepository.findByUser(user);
+        Stats stats = statsRepository.findByUser(user);
+        stats.getUser().clear();
+        return stats;
     }
 
     /**
