@@ -1,5 +1,9 @@
 package is.hi.hbv501g.hbv1;
 
+import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
+import is.hi.hbv501g.hbv1.Persistence.Entities.User;
+import is.hi.hbv501g.hbv1.Services.UserService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

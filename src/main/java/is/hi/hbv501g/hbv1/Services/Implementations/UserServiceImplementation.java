@@ -5,27 +5,27 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Relationship;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
-import is.hi.hbv501g.hbv1.Persistence.Entities.Stats;
-import is.hi.hbv501g.hbv1.Persistence.Entities.User;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RelationshipRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.RoleRepository;
-import is.hi.hbv501g.hbv1.Persistence.Repositories.UserRepository;
+import is.hi.hbv501g.hbv1.Persistence.Entities.*;
+import is.hi.hbv501g.hbv1.Persistence.Repositories.*;
 import is.hi.hbv501g.hbv1.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,8 +39,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserServiceImplementation implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    private final RelationshipRepository relationshipRepository;
+    private final StatsRepository statsRepository;
+    private final FriendshipRepository friendshipRepository;
+    private final FriendRequestRepository friendRequestRepository;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -51,9 +52,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     @Override
     public User saveUser(User user) {
         log.info("Saved new user {} to the database", user.getUsername());
+        user = new User(user.getUsername(),"",user.getPassword());
+        if (exists(user)){
+            return null;
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Stats stats = new Stats(user,0.0F,0.0F,0,0);
-        user.setStats(stats);
         return userRepository.save(user);
     }
 
@@ -108,22 +111,41 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
 
     @Override
     public List<User> getFriends(User user) {
-        return null;
+        System.out.println(user.getUsername());
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            System.out.println("No user with this username");
+            return null;
+        }
+        List<Friendship> friendships = friendshipRepository.findAllBySenderOrReciever(user,user);
+        List<User> friends = new ArrayList<>();
+        for (Friendship f:friendships) {
+            if (f.getSender().equals(user)){
+                friends.add(f.getReciever());
+            }
+            else friends.add(f.getSender());
+        }
+        return friends;
     }
 
     @Override
-    public Relationship makeRelationship(User sender, User reciever) {
-        return null;
+    public List<Stats> getFriendsStats(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            System.out.println("No user with this username");
+            return null;
+        }
+        List<User> friends = getFriends(user);
+        List<Stats> friendsStats = new ArrayList<>();
+        for (User friend:friends) {
+            friendsStats.add(statsRepository.findByUser(friend));
+        }
+        return friendsStats;
     }
 
-    /**
-     * Find a user by his id
-     * @param id the id of the user
-     * @return the user
-     */
     @Override
-    public User findById(long id) {
-        return userRepository.findById(id);
+    public Friendship makeRelationship(User sender, User reciever) {
+        return null;
     }
 
     @Override
@@ -151,7 +173,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 Map<String,String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
-                tokens.put("username", username);
+                tokens.put("username",username);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             } catch (Exception e){
@@ -205,5 +227,122 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public FriendRequest sendFriendRequest(FriendRequest friendRequest) {
+        User sender = findByUsername(friendRequest.getRequestSender().getUsername());
+        User reciever = findByUsername(friendRequest.getRequestReciever().getUsername());
+        if (isNull(reciever)){
+            System.out.println("Reciever not found");
+            return null;
+        }
+        if (isNull(sender)){
+            System.out.println("Sender not found");
+            return null;
+        }
+        if (sender.getUsername().equals(reciever.getUsername())){
+            System.out.println("Not possible to send yourself friendrequest");
+            return null;
+        }
+        if (friendshipExists(new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever()))){
+            System.out.println("Friendship already exists");
+            return null;
+        }
+        if (friendRequestExists(friendRequest)){
+            System.out.println("Friend request already exists");
+            return null;
+        }
+        FriendRequest toSave = new FriendRequest(sender,reciever);
+        friendRequestRepository.save(toSave);
+        return toSave;
+    }
+    @Override
+    public ResponseEntity sendFriendRequestVol2(FriendRequest friendRequest) {
+        User sender = findByUsername(friendRequest.getRequestSender().getUsername());
+        User reciever = findByUsername(friendRequest.getRequestReciever().getUsername());
+        if (isNull(reciever)){
+            System.out.println("Reciever not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Reciever not found\"}");
+        }
+        if (isNull(sender)){
+            System.out.println("Sender not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Sender not found\"}");
+        }
+        if (sender.getUsername().equals(reciever.getUsername())){
+            System.out.println("Not possible to send yourself friendrequest");
+            return ResponseEntity.status(FORBIDDEN).body("{\"error\":\"Not possible to send yourself friendrequest\"}");
+        }
+        if (friendshipExists(new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever()))){
+            System.out.println("Friendship already exists");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friendship already exists\"}");
+        }
+        if (friendRequestExists(friendRequest)){
+            System.out.println("Friend request already exists");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friend request already exists\"}");
+        }
+        FriendRequest toSave = new FriendRequest(sender,reciever);
+        friendRequestRepository.save(toSave);
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/friends/sendRequest").toUriString());
+        return ResponseEntity.created(uri).body(toSave);
+    }
+
+    private boolean friendshipExists(Friendship friendship){
+        List<Friendship> f1 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getSender().getUsername(),friendship.getReciever().getUsername());
+        List<Friendship> f2 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getReciever().getUsername(),friendship.getSender().getUsername());
+        if (f1.isEmpty() && f2.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+    private boolean friendRequestExists(FriendRequest friendRequest){
+        List<FriendRequest> r1 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestSender().getUsername(),friendRequest.getRequestReciever().getUsername());
+        List<FriendRequest> r2 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestReciever().getUsername(),friendRequest.getRequestSender().getUsername());
+        if (r1.isEmpty() && r2.isEmpty()){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Friendship acceptRequest(FriendRequest friendRequest) {
+        System.out.println(friendRequest.getId());
+        friendRequest = friendRequestRepository.findById(friendRequest.getId());
+        if (isNull(friendRequest)){
+            System.out.println("No request with this id");
+            return null;
+        }
+        friendRequestRepository.delete(friendRequest);
+        Friendship friendship = new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever());
+        friendshipRepository.save(friendship);
+        return friendship;
+    }
+
+    @Override
+    public FriendRequest declineRequest(FriendRequest friendRequest) {
+        friendRequest = friendRequestRepository.findById(friendRequest.getId());
+        if (isNull(friendRequest)){
+            return null;
+        }
+        friendRequestRepository.delete(friendRequest);
+        return friendRequest;
+    }
+
+    @Override
+    public List<FriendRequest> getIncomingRequests(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            return null;
+        }
+        return friendRequestRepository.findAllByRequestReciever(user);
+    }
+
+    @Override
+    public List<FriendRequest> getOutgoingRequests(User user) {
+        user = findByUsername(user.getUsername());
+        if (isNull(user)){
+            return null;
+        }
+        return friendRequestRepository.findAllByRequestSender(user);
     }
 }

@@ -21,14 +21,16 @@ public class StatisticsServiceImplementation implements StatisticsService {
     private final RandomAttemptRepository randomAttemptRepository;
     private final LessonAttemptRepository lessonAttemptRepository;
     private final QuoteRepository quoteRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
+    public StatisticsServiceImplementation(UserRepository userRepository,StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
         this.statsRepository = statsRepository;
         this.quoteAttemptRepository = quoteAttemptRepository;
         this.randomAttemptRepository = randomAttemptRepository;
         this.quoteRepository = quoteRepository;
         this.lessonAttemptRepository = lessonAttemptRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -101,7 +103,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         //TODO útfæra þetta betur
         qa.sort(QuoteAttempt::compareTo);
         List<QuoteAttempt> ret = new ArrayList<QuoteAttempt>();
-        int retLength = Math.min(LeaderboardLength,qa.size());
+        int retLength = Math.max(LeaderboardLength,qa.size());
         for (int i = 0; i < retLength; i++) {
             System.out.println("Bætt við");
             qa.get(i).getUser().clear();
@@ -114,7 +116,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
         List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
-        int leaderboard = Math.min(stats.size(),LeaderboardLength);
+        int leaderboard = Math.max(stats.size(),LeaderboardLength);
+
+        for (Stats s: stats) {
+            s.getUser().clear();
+        }
         return stats.subList(0,leaderboard);
     }
 
@@ -177,7 +183,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public Stats getStatisticsOfUser(User user) {
-        return statsRepository.findByUser(user);
+        user = userRepository.findByUsername(user.getUsername());
+        Stats stats = statsRepository.findByUser(user);
+        stats.getUser().clear();
+        return stats;
     }
 
     /**
@@ -219,7 +228,6 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
-        System.out.println("Klárað: " + quoteAttempt.isCompleted());
         if (quoteAttempt.isCompleted()){
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
@@ -265,8 +273,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
-        System.out.println("Klárað: " + randomAttempt.isCompleted());
-        if (randomAttempt.isCompleted()){
+        if (!randomAttempt.isCompleted()){
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
