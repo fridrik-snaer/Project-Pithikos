@@ -32,9 +32,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RandomAttempt> randomAttempts = new ArrayList<>();
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Relationship> senderRelationships = new ArrayList<>();
+    private List<Friendship> senderFriendships = new ArrayList<>();
     @OneToMany(mappedBy = "reciever", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Relationship> recieverRelationships = new ArrayList<>();
+    private List<Friendship> recieverFriendships = new ArrayList<>();
+    @OneToMany(mappedBy = "requestSender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FriendRequest> senderFriendRequests = new ArrayList<>();
+    @OneToMany(mappedBy = "requestReciever", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FriendRequest> recieverFriendRequests = new ArrayList<>();
 
     public Timestamp getCreatedAt() {
         return createdAt;
@@ -77,11 +81,14 @@ public class User {
         return this.id == user.id;
     }
     public void clear(){
+        setPassword(null);
         setStats(null);
         setQuoteAttempts(null);
         setRandomAttempts(null);
-        setRecieverRelationships(null);
-        setSenderRelationships(null);
+        setRecieverFriendships(null);
+        setSenderFriendships(null);
+        setRecieverFriendRequests(null);
+        setSenderFriendRequests(null);
     }
 
     //<editor-fold desc="Functions">
@@ -145,20 +152,36 @@ public class User {
         this.randomAttempts = randomAttempts;
     }
 
-    public List<Relationship> getSenderRelationships() {
-        return senderRelationships;
+    public List<Friendship> getSenderFriendships() {
+        return senderFriendships;
     }
 
-    public void setSenderRelationships(List<Relationship> senderRelationships) {
-        this.senderRelationships = senderRelationships;
+    public void setSenderFriendships(List<Friendship> senderFriendships) {
+        this.senderFriendships = senderFriendships;
     }
 
-    public List<Relationship> getRecieverRelationships() {
-        return recieverRelationships;
+    public List<Friendship> getRecieverFriendships() {
+        return recieverFriendships;
     }
 
-    public void setRecieverRelationships(List<Relationship> recieverRelationships) {
-        this.recieverRelationships = recieverRelationships;
+    public void setRecieverFriendships(List<Friendship> recieverFriendships) {
+        this.recieverFriendships = recieverFriendships;
+    }
+
+    public List<FriendRequest> getSenderFriendRequests() {
+        return senderFriendRequests;
+    }
+
+    public void setSenderFriendRequests(List<FriendRequest> senderFriendRequests) {
+        this.senderFriendRequests = senderFriendRequests;
+    }
+
+    public List<FriendRequest> getRecieverFriendRequests() {
+        return recieverFriendRequests;
+    }
+
+    public void setRecieverFriendRequests(List<FriendRequest> recieverFriendRequests) {
+        this.recieverFriendRequests = recieverFriendRequests;
     }
     //</editor-fold>
 }

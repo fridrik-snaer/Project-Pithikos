@@ -46,6 +46,7 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping(value="/users/leaderboard/get",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Stats> getLeaderboardOfUsers(){
+
         return statisticsService.getLeaderBoardOfUsers();
     }
 

@@ -21,14 +21,16 @@ public class StatisticsServiceImplementation implements StatisticsService {
     private final RandomAttemptRepository randomAttemptRepository;
     private final LessonAttemptRepository lessonAttemptRepository;
     private final QuoteRepository quoteRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public StatisticsServiceImplementation(StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
+    public StatisticsServiceImplementation(UserRepository userRepository,StatsRepository statsRepository, QuoteAttemptRepository quoteAttemptRepository, RandomAttemptRepository randomAttemptRepository, QuoteRepository quoteRepository,LessonAttemptRepository lessonAttemptRepository) {
         this.statsRepository = statsRepository;
         this.quoteAttemptRepository = quoteAttemptRepository;
         this.randomAttemptRepository = randomAttemptRepository;
         this.quoteRepository = quoteRepository;
         this.lessonAttemptRepository = lessonAttemptRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -113,7 +115,13 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
-        return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
+        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
+        int leaderboard = Math.max(stats.size(),LeaderboardLength);
+
+        for (Stats s: stats) {
+            s.getUser().clear();
+        }
+        return stats.subList(0,leaderboard);
     }
 
     /**
@@ -175,7 +183,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public Stats getStatisticsOfUser(User user) {
-        return statsRepository.findByUser(user);
+        user = userRepository.findByUsername(user.getUsername());
+        Stats stats = statsRepository.findByUser(user);
+        stats.getUser().clear();
+        return stats;
     }
 
     /**
