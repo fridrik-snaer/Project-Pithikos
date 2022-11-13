@@ -101,7 +101,7 @@ public class TypingController {
 
     @CrossOrigin
     @RequestMapping(value="/lessons/getByLanguage/{lang}/{lvl}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
-    public Lesson getLessonsByLanguage(@PathVariable String lang,@PathVariable int lvl) {
+    public Lesson getLessonsByLanguageAndLvl(@PathVariable String lang,@PathVariable int lvl) {
         List<Lesson> lessons = typingService.getLessonsByLanguage(Lang.valueOf(lang));
         if (lessons.size()<lvl){
             return null;

@@ -52,6 +52,10 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     @Override
     public User saveUser(User user) {
         log.info("Saved new user {} to the database", user.getUsername());
+        user = new User(user.getUsername(),"",user.getPassword());
+        if (exists(user)){
+            return null;
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

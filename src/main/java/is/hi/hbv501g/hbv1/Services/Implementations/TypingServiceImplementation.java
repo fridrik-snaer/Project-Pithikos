@@ -125,6 +125,6 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public List<Lesson> getLessonsByLanguage(Lang lang) {
-        return lessonRepository.findAllByLangOOrderByLvl(lang);
+        return lessonRepository.findAllByLangOrderByLvl(lang);
     }
 }

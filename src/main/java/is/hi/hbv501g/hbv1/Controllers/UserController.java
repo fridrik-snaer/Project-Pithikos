@@ -40,10 +40,10 @@ public class UserController {
     public ResponseEntity<User> createAccount(@RequestBody User user){
         User newUser = userService.saveUser(user);
         if(isNull(newUser)){
-            //Spurning hvort við viljum skila einhverju
             return ResponseEntity.unprocessableEntity().body(null);
         }
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+        user.clear();
         return ResponseEntity.created(uri).body(user);
     }
 
@@ -158,12 +158,8 @@ public class UserController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/friends/getFriends",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getFriends(HttpServletRequest request){
-        String username = getUsername(request);
-        System.out.println(username);
-        User user = new User();
-        user.setUsername(username);
+    @RequestMapping(value = "/friends/getFriends",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getFriends(@RequestBody User user){
         System.out.println("Tried to get friends of user");
         List<User> friends = userService.getFriends(user);
         if (isNull(friends)){
@@ -173,26 +169,6 @@ public class UserController {
             f.clear();
         }
         return ResponseEntity.ok().body(friends);
-    }
-
-    private static String getUsername(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        String username = "";
-        //TODO: skoða hvort það sé hægt að gera startsWith("Bearer ") betur
-        if(authorizationHeader != null && authorizationHeader.startsWith("Frik ")) {
-            try {
-                //Decode jwt token and add authorities to SecurityContextHolder
-                String token = authorizationHeader.substring("Frik ".length());
-                System.out.println();
-                log.info("Token {}", token);
-                //TODO: refactor secret
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(token);
-                username = decodedJWT.getSubject();
-            }catch(Exception e){System.out.println("Hvað í fokkanum er í gangi");}
-        }
-        return username;
     }
 
     @CrossOrigin
@@ -208,5 +184,6 @@ public class UserController {
         }
         return ResponseEntity.ok().body(friendsStats);
     }
+
 
 }
