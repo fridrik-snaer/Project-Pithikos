@@ -117,6 +117,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         //return null;
         List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
         int leaderboard = Math.max(stats.size(),LeaderboardLength);
+
         for (Stats s: stats) {
             s.getUser().clear();
         }
