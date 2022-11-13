@@ -101,7 +101,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         //TODO útfæra þetta betur
         qa.sort(QuoteAttempt::compareTo);
         List<QuoteAttempt> ret = new ArrayList<QuoteAttempt>();
-        int retLength = Math.max(LeaderboardLength,qa.size());
+        int retLength = Math.min(LeaderboardLength,qa.size());
         for (int i = 0; i < retLength; i++) {
             System.out.println("Bætt við");
             qa.get(i).getUser().clear();
@@ -113,7 +113,9 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
-        return statsRepository.findTop10ByOrderByAvgWpm().subList(0,LeaderboardLength);
+        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
+        int leaderboard = Math.min(stats.size(),LeaderboardLength);
+        return stats.subList(0,leaderboard);
     }
 
     /**
@@ -217,6 +219,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
+        System.out.println("Klárað: " + quoteAttempt.isCompleted());
         if (quoteAttempt.isCompleted()){
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
@@ -262,7 +265,8 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
-        if (!randomAttempt.isCompleted()){
+        System.out.println("Klárað: " + randomAttempt.isCompleted());
+        if (randomAttempt.isCompleted()){
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken

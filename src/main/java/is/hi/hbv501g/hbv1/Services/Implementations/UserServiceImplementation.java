@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Relationship;
 import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
+import is.hi.hbv501g.hbv1.Persistence.Entities.Stats;
 import is.hi.hbv501g.hbv1.Persistence.Entities.User;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.RelationshipRepository;
 import is.hi.hbv501g.hbv1.Persistence.Repositories.RoleRepository;
@@ -51,6 +52,8 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
     public User saveUser(User user) {
         log.info("Saved new user {} to the database", user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Stats stats = new Stats(user,0.0F,0.0F,0,0);
+        user.setStats(stats);
         return userRepository.save(user);
     }
 
@@ -148,6 +151,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 Map<String,String> tokens = new HashMap<>();
                 tokens.put("accessToken", accessToken);
                 tokens.put("refreshToken", refreshToken);
+                tokens.put("username", username);
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             } catch (Exception e){

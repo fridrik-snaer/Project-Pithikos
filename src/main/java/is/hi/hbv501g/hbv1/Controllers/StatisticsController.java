@@ -131,7 +131,6 @@ public class StatisticsController {
         userService.findByUsername(user.getUsername());
         return statisticsService.getStatisticsOfUser(user);
     }
-
     @CrossOrigin
     @RequestMapping (value="/lessons/getUserCompleted/{lang}", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Lesson> getUsersLessonsCompleted(@RequestBody User user,@PathVariable String lang){
@@ -139,5 +138,4 @@ public class StatisticsController {
         User user1 = userService.findByUsername(user.getUsername());
         return statisticsService.getUsersLessonsCompleted(user1,language);
     }
-
 }
