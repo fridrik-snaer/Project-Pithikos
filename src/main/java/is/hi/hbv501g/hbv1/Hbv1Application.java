@@ -1,5 +1,9 @@
 package is.hi.hbv501g.hbv1;
 
+import is.hi.hbv501g.hbv1.Persistence.Entities.Role;
+import is.hi.hbv501g.hbv1.Persistence.Entities.User;
+import is.hi.hbv501g.hbv1.Services.UserService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -31,16 +35,16 @@ public class Hbv1Application {
     /**
      * A bean that allows us to inject data into the database
      */
-//    @Bean
-//    CommandLineRunner run(UserService userService){
-//        return (args) -> {
-//            userService.saveRole(new Role(null,"ROLE_USER"));
-//            userService.saveRole(new Role(null,"ROLE_ADMIN"));
-//            userService.saveUser(new User("admin", "admin", "admin"));
-//            userService.addRoleToUser("admin", "ROLE_ADMIN");
-//            userService.addRoleToUser("admin", "ROLE_USER");
-//        };
-//    }
+/*    @Bean
+    CommandLineRunner run(UserService userService){
+        return (args) -> {
+            userService.saveRole(new Role(null,"ROLE_USER"));
+            userService.saveRole(new Role(null,"ROLE_ADMIN"));
+            userService.saveUser(new User("admin", "admin", "admin"));
+            userService.addRoleToUser("admin", "ROLE_ADMIN");
+            userService.addRoleToUser("admin", "ROLE_USER");
+        };
+    }*/
 
     /**
      * A bean that configures application cors policy configuration

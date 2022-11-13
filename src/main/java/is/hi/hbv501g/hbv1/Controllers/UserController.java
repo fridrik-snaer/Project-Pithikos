@@ -179,10 +179,10 @@ public class UserController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String username = "";
         //TODO: skoða hvort það sé hægt að gera startsWith("Bearer ") betur
-        if(authorizationHeader != null && authorizationHeader.startsWith("Frik ")) {
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
                 //Decode jwt token and add authorities to SecurityContextHolder
-                String token = authorizationHeader.substring("Frik ".length());
+                String token = authorizationHeader.substring("Bearer ".length());
                 System.out.println();
                 log.info("Token {}", token);
                 //TODO: refactor secret

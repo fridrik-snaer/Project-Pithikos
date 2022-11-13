@@ -129,7 +129,9 @@ public class StatisticsController {
     @RequestMapping (value="/getStatisticsOfUser", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public Stats getStatisticsOfUser(@RequestBody User user){
         userService.findByUsername(user.getUsername());
-        return statisticsService.getStatisticsOfUser(user);
+        Stats stats = statisticsService.getStatisticsOfUser(user);
+        stats.getUser().clear();
+        return stats;
     }
 
     @CrossOrigin
