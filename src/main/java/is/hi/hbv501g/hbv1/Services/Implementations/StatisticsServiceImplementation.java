@@ -115,8 +115,8 @@ public class StatisticsServiceImplementation implements StatisticsService {
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
-        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
-        int leaderboard = Math.max(stats.size(),LeaderboardLength);
+        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpmDesc();
+        int leaderboard = Math.min(stats.size(),LeaderboardLength);
 
         for (Stats s: stats) {
             s.getUser().clear();

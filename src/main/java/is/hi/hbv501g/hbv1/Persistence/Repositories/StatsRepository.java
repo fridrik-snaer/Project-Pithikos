@@ -10,6 +10,7 @@ public interface StatsRepository extends JpaRepository<Stats,Long> {
     Stats findByUser(User user);
     Stats save(Stats stats);
     void delete(Stats stats);
+    List<Stats> findTop10ByOrderByAvgWpmDesc();
     List<Stats> findTop10ByOrderByAvgWpm();
     List<Stats> findAll();
 }
