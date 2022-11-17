@@ -115,6 +115,9 @@ public class TypingServiceImplementation implements TypingService {
     @Override
     public void deleteQuote(Quote quote) {
         Quote quote1 = getQuoteById(quote.getId());
+        if (quote1.isAccepted()){
+            return;
+        }
         quoteRepository.delete(quote1);
     }
 
@@ -125,6 +128,6 @@ public class TypingServiceImplementation implements TypingService {
 
     @Override
     public List<Lesson> getLessonsByLanguage(Lang lang) {
-        return lessonRepository.findAllByLang(lang);
+        return lessonRepository.findAllByLangOrderByLvl(lang);
     }
 }

@@ -99,6 +99,16 @@ public class TypingController {
         return typingService.getLessonsByLanguage(Lang.valueOf(lang));
     }
 
+    @CrossOrigin
+    @RequestMapping(value="/lessons/getByLanguage/{lang}/{lvl}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public Lesson getLessonsByLanguageAndLvl(@PathVariable String lang,@PathVariable int lvl) {
+        List<Lesson> lessons = typingService.getLessonsByLanguage(Lang.valueOf(lang));
+        if (lessons.size()<lvl){
+            return null;
+        }
+        return lessons.get(lvl-1);
+    }
+
     /**
      * A way to submit quotes, quote object preferrably includes text, language and origin
      * @param quote The quote to be submitted

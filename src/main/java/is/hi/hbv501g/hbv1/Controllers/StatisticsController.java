@@ -46,6 +46,7 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping(value="/users/leaderboard/get",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Stats> getLeaderboardOfUsers(){
+
         return statisticsService.getLeaderBoardOfUsers();
     }
 
@@ -133,7 +134,6 @@ public class StatisticsController {
         stats.getUser().clear();
         return stats;
     }
-
     @CrossOrigin
     @RequestMapping (value="/lessons/getUserCompleted/{lang}", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Lesson> getUsersLessonsCompleted(@RequestBody User user,@PathVariable String lang){
@@ -141,5 +141,4 @@ public class StatisticsController {
         User user1 = userService.findByUsername(user.getUsername());
         return statisticsService.getUsersLessonsCompleted(user1,language);
     }
-
 }

@@ -40,10 +40,10 @@ public class UserController {
     public ResponseEntity<User> createAccount(@RequestBody User user){
         User newUser = userService.saveUser(user);
         if(isNull(newUser)){
-            //Spurning hvort við viljum skila einhverju
             return ResponseEntity.unprocessableEntity().body(null);
         }
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/user/save").toUriString());
+        user.clear();
         return ResponseEntity.created(uri).body(user);
     }
 
@@ -158,12 +158,8 @@ public class UserController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/friends/getFriends",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getFriends(HttpServletRequest request){
-        String username = getUsername(request);
-        System.out.println(username);
-        User user = new User();
-        user.setUsername(username);
+    @RequestMapping(value = "/friends/getFriends",produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getFriends(@RequestBody User user){
         System.out.println("Tried to get friends of user");
         List<User> friends = userService.getFriends(user);
         if (isNull(friends)){
@@ -208,5 +204,6 @@ public class UserController {
         }
         return ResponseEntity.ok().body(friendsStats);
     }
+
 
 }

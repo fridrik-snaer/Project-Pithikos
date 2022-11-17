@@ -10,6 +10,7 @@ public interface LessonRepository extends JpaRepository<Lesson,Long> {
     List<Lesson> findAll();
     Lesson findById(long id);
     List<Lesson> findAllByLang(Lang lang);
+    List<Lesson> findAllByLangOrderByLvl(Lang lang);
     Lesson findByLvlAndAndLang(int lvl,Lang lang);
     Lesson save(Lesson lesson);
 }
