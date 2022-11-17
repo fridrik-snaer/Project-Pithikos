@@ -71,6 +71,11 @@ public class UserController {
         userService.refreshToken(request,response);
     }
 
+    /**
+     * Sends a friendrequest that is saves it to database
+     * @param friendRequest Friendrequest to send
+     * @return The friendrequest with its id
+     */
     @CrossOrigin
     @RequestMapping(value="/friends/sendRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FriendRequest> sendFriendRequest(@RequestBody FriendRequest friendRequest){
@@ -85,6 +90,11 @@ public class UserController {
         return ResponseEntity.created(uri).body(friendRequest1);
     }
 
+    /**
+     * Sends a friendrequest that is saves it to database
+     * @param friendRequest Friendrequest to send
+     * @return The friendrequest with its id
+     */
     @CrossOrigin
     @RequestMapping(value="/friends/sendRequest2",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity sendFriendRequest2(@RequestBody FriendRequest friendRequest){
@@ -100,6 +110,11 @@ public class UserController {
         return ResponseEntity.created(uri).header(response.getHeaders().toString()).body(friendRequest1);
     }
 
+    /**
+     * Moves friendrequest to friendrequests
+     * @param friendRequest the friendrequest to accept must include id
+     * @return friendship newly made
+     */
     @CrossOrigin
     @RequestMapping(value = "/friends/acceptRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity acceptRequest(@RequestBody FriendRequest friendRequest){
@@ -114,6 +129,11 @@ public class UserController {
         return ResponseEntity.created(uri).body(friendship);
     }
 
+    /**
+     * Removes friendRequest from database
+     * @param friendRequest to delete
+     * @return friendRequest newly deleted
+     */
     @CrossOrigin
     @RequestMapping(value = "/friends/declineRequest",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity declineRequest(@RequestBody FriendRequest friendRequest){
@@ -127,6 +147,11 @@ public class UserController {
         return ResponseEntity.accepted().build();
     }
 
+    /**
+     * Gets all requests that user is reciever in
+     * @param user user in question
+     * @return list of all friendships user in reciever in
+     */
     @CrossOrigin
     @RequestMapping(value = "/friends/getIncomingRequests",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getIncomingRequests(@RequestBody User user){
@@ -142,6 +167,11 @@ public class UserController {
         return ResponseEntity.ok().body(friendRequests);
     }
 
+    /**
+     * Gets all requests that user is sender in
+     * @param user user in question
+     * @return list of all friendships user in sender in
+     */
     @CrossOrigin
     @RequestMapping(value = "/friends/getOutgoingRequests",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getOutgoingRequests(@RequestBody User user){
@@ -157,6 +187,11 @@ public class UserController {
         return ResponseEntity.ok().body(friendRequests);
     }
 
+    /**
+     * Gets all friends of user based on friendship relations
+     * @param user The user in question
+     * @return List of users that are friends of user in question
+     */
     @CrossOrigin
     @RequestMapping(value = "/friends/getFriends",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getFriends(@RequestBody User user){
@@ -170,7 +205,6 @@ public class UserController {
         }
         return ResponseEntity.ok().body(friends);
     }
-
     private static String getUsername(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         String username = "";

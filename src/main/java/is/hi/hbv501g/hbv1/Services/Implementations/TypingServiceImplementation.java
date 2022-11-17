@@ -62,6 +62,11 @@ public class TypingServiceImplementation implements TypingService {
         return quoteRepository.findAllByAcceptedTrueAndDailyFalseAndLanguage(lang);
     }
 
+    /**
+     * Returns all quotes of language lang, even those marked as unaccepted
+     * @param lang The language of the quotes
+     * @return List of all quotes of specified language excluding daily challenges
+     */
     @Override
     public List<Quote> getQuotesWithNonAcc(Lang lang){
         return quoteRepository.findAllByDailyFalseAndLanguage(lang);
@@ -80,11 +85,17 @@ public class TypingServiceImplementation implements TypingService {
         return dailies.get((int)day_diff%dailies.size());
     }
 
+
     @Override
     public Quote getUnacceptedQuote(Lang lang) {
         return null;
     }
 
+    /**
+     * Adds a quote to the database marks it as unaccepted
+     * @param quote Quote to be added
+     * @return The quote with its newly generated id
+     */
     @Override
     public Quote submitQuote(Quote quote) {
         Quote quote1 = new Quote(quote.getText(),quote.getLanguage(),quote.getOrigin(),false,false);
@@ -97,6 +108,12 @@ public class TypingServiceImplementation implements TypingService {
         return null;
     }
 
+    /**
+     * Get a lesson by lvl and language
+     * @param lvl the level of the lesson
+     * @param lang the language of the lesson
+     * @return The lesson in question
+     */
     @Override
     public List<Lesson> getLessons(int lvl, Lang lang) {
         return null;
@@ -112,6 +129,10 @@ public class TypingServiceImplementation implements TypingService {
         return quoteRepository.findById(quote_id);
     }
 
+    /**
+     * Deletes a quote if its unaccepted
+     * @param quote
+     */
     @Override
     public void deleteQuote(Quote quote) {
         Quote quote1 = getQuoteById(quote.getId());
@@ -121,11 +142,21 @@ public class TypingServiceImplementation implements TypingService {
         quoteRepository.delete(quote1);
     }
 
+    /**
+     * Finds a lesson by its id
+     * @param id id of lesson
+     * @return Lesson in question
+     */
     @Override
     public Lesson getLessonByID(long id) {
         return lessonRepository.findById(id);
     }
 
+    /**
+     * Returns all lessons of language
+     * @param lang langauge required
+     * @return All lessons of language
+     */
     @Override
     public List<Lesson> getLessonsByLanguage(Lang lang) {
         return lessonRepository.findAllByLangOrderByLvl(lang);

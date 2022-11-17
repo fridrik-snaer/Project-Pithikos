@@ -43,6 +43,10 @@ public class StatisticsController {
         return attempts;
     }
 
+    /**
+     * Returns the overall leaderboard of users stats based on avgWpm
+     * @return The lists of stats where ovgWpm is the highest in order
+     */
     @CrossOrigin
     @RequestMapping(value="/users/leaderboard/get",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Stats> getLeaderboardOfUsers(){
@@ -80,6 +84,11 @@ public class StatisticsController {
         return statisticsService.addRandomAttempt(randomAttempt);
     }
 
+    /**
+     * Adds a lesson attempt to the database, does not the stats of the user with respect to the attempt
+     * @param  lessonAttempt the attempts being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @CrossOrigin
     @RequestMapping (value="/lessons/addAttempt", consumes = MediaType.APPLICATION_JSON_VALUE)
     public LessonAttempt addLessonAttempt(@RequestBody LessonAttempt lessonAttempt){
@@ -113,7 +122,7 @@ public class StatisticsController {
      * @return the two percentile rankings
      */
     @CrossOrigin
-    @RequestMapping (value="/getComparisons/{quoteAttempt_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping (value="/getComparisons/{quoteAttempt_id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public int[] getComparisons(@PathVariable int quoteAttempt_id){
         int[] stats = new int[2];
         stats[0] = statisticsService.getSpeedPercentileForQuoteAttempt(quoteAttempt_id);
@@ -134,6 +143,13 @@ public class StatisticsController {
         stats.getUser().clear();
         return stats;
     }
+
+    /**
+     * Gets a list of all the lessons a user has completed so he can see it in the interface
+     * @param user The user you want to see the lessons completed of
+     * @param lang The language the user has completed the lessons in
+     * @return The lessons of lang the user has completed
+     */
     @CrossOrigin
     @RequestMapping (value="/lessons/getUserCompleted/{lang}", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Lesson> getUsersLessonsCompleted(@RequestBody User user,@PathVariable String lang){

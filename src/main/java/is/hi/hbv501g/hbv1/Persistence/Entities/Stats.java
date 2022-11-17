@@ -11,7 +11,7 @@ public class Stats {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     private User user;
     private float avgWpm;
     private float avgAcc;
@@ -45,6 +45,10 @@ public class Stats {
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public float getAvgWpm() {

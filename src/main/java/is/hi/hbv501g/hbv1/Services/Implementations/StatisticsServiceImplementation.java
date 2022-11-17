@@ -83,7 +83,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
         }
         return quoteAttemptList;
     }
-
+    /**
+     * Adds a lesson attempt to the database, does not the stats of the user with respect to the attempt
+     * @param  lessonAttempt the attempts being added
+     * @return The attempt being added along with its newly generated id for future reference
+     */
     @Override
     public LessonAttempt addLessonAttempt(LessonAttempt lessonAttempt) {
         LessonAttempt l = lessonAttemptRepository.save(lessonAttempt);
@@ -112,11 +116,15 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return ret;
     }
 
+    /**
+     * Returns the overall leaderboard of users stats based on avgWpm
+     * @return The lists of stats where ovgWpm is the highest in order
+     */
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
         //return null;
-        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpm();
-        int leaderboard = Math.max(stats.size(),LeaderboardLength);
+        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpmDesc();
+        int leaderboard = Math.min(stats.size(),LeaderboardLength);
 
         for (Stats s: stats) {
             s.getUser().clear();
@@ -229,6 +237,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
         if (quoteAttempt.isCompleted()){
+            System.out.println("Uppfært completed");
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
@@ -273,7 +282,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float new_avg_acc = (old_avg_acc*(float)stats.getTestsCompleted()+acc)/(float)(stats.getTestsCompleted()+1);
         stats.setAvgAcc(new_avg_acc);
         //Uppfæra completed
-        if (!randomAttempt.isCompleted()){
+        if (randomAttempt.isCompleted()){
             stats.setTestsCompleted(stats.getTestsCompleted()+1);
         }
         //Uppfæra tests taken
@@ -294,6 +303,12 @@ public class StatisticsServiceImplementation implements StatisticsService {
         return statsRepository.findAll();
     }
 
+    /**
+     * Gets a list of all the lessons a user has completed so he can see it in the interface
+     * @param user The user you want to see the lessons completed of
+     * @param lang The language the user has completed the lessons in
+     * @return The lessons of lang the user has completed
+     */
     @Override
     public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
         List<Lesson> lessons = new ArrayList<>();
