@@ -76,6 +76,10 @@ public class TypingController {
         return typingService.getQuotesWithNonAcc(Lang.valueOf(lang));
     }
 
+    /**
+     * Deletes a quote if its unaccepted
+     * @param quote
+     */
     @CrossOrigin
     @RequestMapping(value="/deleteQuote", method= RequestMethod.POST, consumes = "application/json;charset=UTF-8")
     public void deleteQuote(@RequestBody Quote quote) {
@@ -93,12 +97,23 @@ public class TypingController {
         return typingService.getDailyChallenge(Lang.valueOf(lang));
     }
 
+    /**
+     * Returns all lessons of language
+     * @param lang langauge required
+     * @return All lessons of language
+     */
     @CrossOrigin
     @RequestMapping(value="/lessons/getByLanguage/{lang}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public List<Lesson> getLessonsByLanguage(@PathVariable String lang) {
         return typingService.getLessonsByLanguage(Lang.valueOf(lang));
     }
 
+    /**
+     * Get a lesson by lvl and language
+     * @param lvl the level of the lesson
+     * @param lang the language of the lesson
+     * @return The lesson in question
+     */
     @CrossOrigin
     @RequestMapping(value="/lessons/getByLanguage/{lang}/{lvl}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public Lesson getLessonsByLanguageAndLvl(@PathVariable String lang,@PathVariable int lvl) {
@@ -118,8 +133,6 @@ public class TypingController {
     public void submitQuote(@RequestBody Quote quote) {
         typingService.submitQuote(quote);
     }
-
-
 
     //Temporary classes used for enpoint displaying
     //TODO: replace these with a HashMap

@@ -112,6 +112,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return null;
     }
 
+    /**
+     * Gets all friends of user based on friendship relations
+     * @param user The user in question
+     * @return List of users that are friends of user in question
+     */
     @Override
     public List<User> getFriends(User user) {
         System.out.println(user.getUsername());
@@ -131,6 +136,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return friends;
     }
 
+    /**
+     * Get stats of all friends of user
+     * @param user user in question
+     * @return List of stats of all friends of user
+     */
     @Override
     public List<Stats> getFriendsStats(User user) {
         user = findByUsername(user.getUsername());
@@ -146,11 +156,23 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return friendsStats;
     }
 
+    /**
+     * NOT USED NOR IMPLEMENTED
+     * @param sender
+     * @param reciever
+     * @return
+     */
     @Override
     public Friendship makeRelationship(User sender, User reciever) {
         return null;
     }
 
+    /**
+     * Gets the refresh token of loggedin user
+     * @param request
+     * @param response
+     * @throws IOException
+     */
     @Override
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("I am in the refreshToken method");
@@ -206,6 +228,12 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return !isNull(dbUser);
     }
 
+    /**
+     *
+     * @param username
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     //Implement-a þetta frá UserDetailService svo að þetta class sé usable í SecurityConfig
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -227,11 +255,21 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
                 authorities);
     }
 
+    /**
+     * Finds a user by their unique username
+     * @param username username to search by
+     * @return User in question
+     */
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * Sends a friendrequest that is saves it to database
+     * @param friendRequest Friendrequest to send
+     * @return The friendrequest with its id
+     */
     @Override
     public FriendRequest sendFriendRequest(FriendRequest friendRequest) {
         User sender = findByUsername(friendRequest.getRequestSender().getUsername());
@@ -260,6 +298,12 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         friendRequestRepository.save(toSave);
         return toSave;
     }
+
+    /**
+     * Sends a friendrequest that is saves it to database
+     * @param friendRequest Friendrequest to send
+     * @return The friendrequest with its id
+     */
     @Override
     public ResponseEntity sendFriendRequestVol2(FriendRequest friendRequest) {
         User sender = findByUsername(friendRequest.getRequestSender().getUsername());
@@ -290,6 +334,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return ResponseEntity.created(uri).body(toSave);
     }
 
+    /**
+     * Checks if friendship exists in databes
+     * @param friendship friendship to be searched by
+     * @return true if sender and reciever are already friend, no matter the direction
+     */
     private boolean friendshipExists(Friendship friendship){
         List<Friendship> f1 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getSender().getUsername(),friendship.getReciever().getUsername());
         List<Friendship> f2 = friendshipRepository.findAllBySender_UsernameAndReciever_Username(friendship.getReciever().getUsername(),friendship.getSender().getUsername());
@@ -298,6 +347,12 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         }
         return true;
     }
+
+    /**
+     * Checks if friendrequest exists in databes
+     * @param friendRequest friendrequest to be searched by
+     * @return true if sender and reciever are already friendrequested, no matter the direction
+     */
     private boolean friendRequestExists(FriendRequest friendRequest){
         List<FriendRequest> r1 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestSender().getUsername(),friendRequest.getRequestReciever().getUsername());
         List<FriendRequest> r2 = friendRequestRepository.findAllByRequestSenderUsernameAndRequestRecieverUsername(friendRequest.getRequestReciever().getUsername(),friendRequest.getRequestSender().getUsername());
@@ -307,6 +362,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return true;
     }
 
+    /**
+     * Moves friendrequest to friendrequests
+     * @param friendRequest the friendrequest to accept must include id
+     * @return friendship newly made
+     */
     @Override
     public Friendship acceptRequest(FriendRequest friendRequest) {
         System.out.println(friendRequest.getId());
@@ -321,6 +381,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return friendship;
     }
 
+    /**
+     * Removes friendRequest from database
+     * @param friendRequest to delete
+     * @return friendRequest newly deleted
+     */
     @Override
     public FriendRequest declineRequest(FriendRequest friendRequest) {
         friendRequest = friendRequestRepository.findById(friendRequest.getId());
@@ -331,6 +396,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return friendRequest;
     }
 
+    /**
+     * Gets all requests that user is reciever in
+     * @param user user in question
+     * @return list of all friendships user in reciever in
+     */
     @Override
     public List<FriendRequest> getIncomingRequests(User user) {
         user = findByUsername(user.getUsername());
@@ -340,6 +410,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         return friendRequestRepository.findAllByRequestReciever(user);
     }
 
+    /**
+     * Gets all requests that user is sender in
+     * @param user user in question
+     * @return list of all friendships user in sender in
+     */
     @Override
     public List<FriendRequest> getOutgoingRequests(User user) {
         user = findByUsername(user.getUsername());
