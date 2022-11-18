@@ -24,7 +24,7 @@ public interface QuoteAttemptRepository extends JpaRepository<QuoteAttempt, Long
             "left join quotes qu on qu.id = qa.quote_id " +
             "where qa.quote_id = :q and qa.canpost = true " +
             "order by " +
-            "qa.time_finish - qa.time_start asc " +
+            "((60 * qa.correct) / (5.156 * extract(epoch from qa.time_finish - qa.time_start))) desc " +
             "LIMIT :n"
     )
     List<QuoteAttempt> findBestQuoteAttempts(@Param("q") long q, @Param("n") int n); // TODO velja líka acc > 0.95
