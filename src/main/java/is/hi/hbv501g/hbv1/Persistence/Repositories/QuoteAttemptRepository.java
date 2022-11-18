@@ -27,5 +27,5 @@ public interface QuoteAttemptRepository extends JpaRepository<QuoteAttempt, Long
             "qa.time_finish - qa.time_start asc " +
             "LIMIT :n"
     )
-    List<QuoteAttempt> findBestQuoteAttempts(@Param("q") long q, @Param("n") int n);
+    List<QuoteAttempt> findBestQuoteAttempts(@Param("q") long q, @Param("n") int n); // TODO velja líka acc > 0.95
 }
