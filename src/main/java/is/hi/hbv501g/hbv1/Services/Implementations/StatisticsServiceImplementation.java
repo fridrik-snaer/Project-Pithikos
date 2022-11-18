@@ -131,14 +131,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
-        //return null;
-        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpmDesc();
-        int leaderboard = Math.min(stats.size(),LeaderboardLength);
-
+        List<Stats> stats = statsRepository.findTopN(LeaderboardLength);
         for (Stats s: stats) {
             s.getUser().clear();
         }
-        return stats.subList(0,leaderboard);
+        return stats;
     }
 
     /**

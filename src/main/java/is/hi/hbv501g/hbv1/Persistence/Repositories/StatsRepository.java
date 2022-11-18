@@ -14,6 +14,18 @@ public interface StatsRepository extends JpaRepository<Stats,Long> {
     Stats save(Stats stats);
     void delete(Stats stats);
     List<Stats> findTop10ByOrderByAvgWpmDesc();
+
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM " +
+                    "stats s " +
+                    "WHERE " +
+                    "s.user_id is not null " +
+                    "order by " +
+                    "avg_wpm desc " +
+                    "limit :n"
+    )
+    List<Stats> findTopN(@Param("n") int n);
+
     List<Stats> findTop10ByOrderByAvgWpm();
     List<Stats> findAll();
 }
