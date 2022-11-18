@@ -34,13 +34,7 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping(value="/getLeaderboardForQuote/{quote_id}",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<QuoteAttempt> getLeaderboardForQuote(@PathVariable long quote_id){
-        //Tilraunastarfsemi
-        System.out.println(quote_id);
-        List<QuoteAttempt> attempts  = statisticsService.getLeaderboardForQuote(quote_id);
-        for (QuoteAttempt attempt: attempts) {
-            System.out.println(attempt);
-        }
-        return attempts;
+        return statisticsService.getLeaderboardForQuote(quote_id);
     }
 
     /**
@@ -50,7 +44,6 @@ public class StatisticsController {
     @CrossOrigin
     @RequestMapping(value="/users/leaderboard/get",method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Stats> getLeaderboardOfUsers(){
-
         return statisticsService.getLeaderBoardOfUsers();
     }
 
@@ -139,7 +132,9 @@ public class StatisticsController {
     @RequestMapping (value="/getStatisticsOfUser", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public Stats getStatisticsOfUser(@RequestBody User user){
         userService.findByUsername(user.getUsername());
-        return statisticsService.getStatisticsOfUser(user);
+        Stats stats = statisticsService.getStatisticsOfUser(user);
+        stats.getUser().clear();
+        return stats;
     }
 
     /**

@@ -205,12 +205,26 @@ public class UserController {
         }
         return ResponseEntity.ok().body(friends);
     }
+    private static String getUsername(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        String username = "";
+        //TODO: skoða hvort það sé hægt að gera startsWith("Bearer ") betur
+        if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
+                //Decode jwt token and add authorities to SecurityContextHolder
+                String token = authorizationHeader.substring("Bearer ".length());
+                System.out.println();
+                log.info("Token {}", token);
+                //TODO: refactor secret
+                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                JWTVerifier verifier = JWT.require(algorithm).build();
+                DecodedJWT decodedJWT = verifier.verify(token);
+                username = decodedJWT.getSubject();
+            }catch(Exception e){System.out.println("Hvað í fokkanum er í gangi");}
+        }
+        return username;
+    }
 
-    /**
-     * Get stats of all friends of user
-     * @param user user in question
-     * @return List of stats of all friends of user
-     */
     @CrossOrigin
     @RequestMapping(value = "/friends/getFriendsStats",consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getFriendsStats(@RequestBody User user){

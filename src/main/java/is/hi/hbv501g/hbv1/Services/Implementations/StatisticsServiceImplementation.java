@@ -100,7 +100,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
      * @param quote_id Id of quote in question
      * @return The quoteAttempts with info about the user and quote
      */
-    @Override
+    /*@Override
     public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
         Quote quote = quoteRepository.findById(quote_id);
         List<QuoteAttempt> qa = quoteAttemptRepository.findByQuote(quote);
@@ -114,6 +114,15 @@ public class StatisticsServiceImplementation implements StatisticsService {
             ret.add(qa.get(i));
         }
         return ret;
+    }*/
+
+    @Override
+    public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
+        List<QuoteAttempt> qa = quoteAttemptRepository.findBestQuoteAttempts(quote_id, 10); // TODO: stilla gildið á n
+        for (int i = 0; i < qa.size(); i++) {
+            qa.get(i).getUser().clear();
+        }
+        return qa;
     }
 
     /**

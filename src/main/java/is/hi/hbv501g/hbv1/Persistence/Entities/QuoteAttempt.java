@@ -14,7 +14,7 @@ public class QuoteAttempt /*extends Attempt*/ implements Comparable<QuoteAttempt
     private long id;
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Quote quote;
     private Timestamp time_start;
     private Timestamp time_finish;
