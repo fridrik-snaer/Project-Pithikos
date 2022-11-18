@@ -63,6 +63,7 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         stats.setUser(user);
         user.setStats(stats);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 
