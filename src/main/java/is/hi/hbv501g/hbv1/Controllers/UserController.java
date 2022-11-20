@@ -111,7 +111,7 @@ public class UserController {
     }
 
     /**
-     * Moves friendrequest to friendrequests
+     * Moves friendrequest to friendships
      * @param friendRequest the friendrequest to accept must include id
      * @return friendship newly made
      */

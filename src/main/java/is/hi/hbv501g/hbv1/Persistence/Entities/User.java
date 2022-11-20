@@ -31,6 +31,8 @@ public class User {
     private List<QuoteAttempt> quoteAttempts = new ArrayList<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RandomAttempt> randomAttempts = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonAttempt> lessonAttempts;
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friendship> senderFriendships = new ArrayList<>();
     @OneToMany(mappedBy = "reciever", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,7 +63,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User: "+ this.username + "\nPassword: " + this.password + "\nEmail: " +this.email;
+        return "User: "+ this.username;
     }
 
     public User(long id) {
@@ -89,6 +91,7 @@ public class User {
         setSenderFriendships(null);
         setRecieverFriendRequests(null);
         setSenderFriendRequests(null);
+        setLessonAttempts(null);
     }
 
     //<editor-fold desc="Functions">
@@ -99,6 +102,14 @@ public class User {
     //</editor-fold>
     //<editor-fold desc="Getters & Setters">
 
+
+    public List<LessonAttempt> getLessonAttempts() {
+        return lessonAttempts;
+    }
+
+    public void setLessonAttempts(List<LessonAttempt> lessonAttempts) {
+        this.lessonAttempts = lessonAttempts;
+    }
 
     public long getId() {
         return id;
