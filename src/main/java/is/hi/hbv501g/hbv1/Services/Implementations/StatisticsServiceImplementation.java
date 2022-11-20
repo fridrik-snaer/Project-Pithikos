@@ -317,9 +317,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
+
         List<Lesson> lessons = new ArrayList<>();
         List<LessonAttempt> attempts = lessonAttemptRepository.findByUserAndLessonLang(user,lang);
-        if (attempts.size()==0){return null;}
+
         for (LessonAttempt la: attempts) {
             Lesson l = la.getLesson();
             if (!lessons.contains(l)){
