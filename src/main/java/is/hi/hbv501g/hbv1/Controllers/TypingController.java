@@ -30,6 +30,7 @@ public class TypingController {
      * API homescreen, returns a list of all posssible endpoints and info about them
      * Should not be available in production
      */
+    /*
     @CrossOrigin
     @RequestMapping(value="/", method= RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Greeting getIndex() {
@@ -39,6 +40,7 @@ public class TypingController {
         Endpoint wordendpoint = new Endpoint("/api/words/{lang}/{rank}", "http", List.of("POST"));
         return new Greeting("Welcome to the api!", List.of(wordendpoint,endpoint));
     }
+     */
 
     /**
      * A method to fetch words for the typing game based on language and frequency rank
