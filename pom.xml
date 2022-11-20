@@ -15,7 +15,6 @@
     <description>HBV1</description>
     <properties>
         <java.version>18</java.version>
-        <maven.compiler.release>18</maven.compiler.release>
     </properties>
     <dependencies>
         <dependency>
