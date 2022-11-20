@@ -100,7 +100,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
      * @param quote_id Id of quote in question
      * @return The quoteAttempts with info about the user and quote
      */
-    @Override
+    /*@Override
     public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
         Quote quote = quoteRepository.findById(quote_id);
         List<QuoteAttempt> qa = quoteAttemptRepository.findByQuote(quote);
@@ -114,6 +114,15 @@ public class StatisticsServiceImplementation implements StatisticsService {
             ret.add(qa.get(i));
         }
         return ret;
+    }*/
+
+    @Override
+    public List<QuoteAttempt> getLeaderboardForQuote(long quote_id) {
+        List<QuoteAttempt> qa = quoteAttemptRepository.findBestQuoteAttempts(quote_id, 10); // TODO: stilla gildið á n
+        for (int i = 0; i < qa.size(); i++) {
+            qa.get(i).getUser().clear();
+        }
+        return qa;
     }
 
     /**
@@ -122,14 +131,11 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public List<Stats> getLeaderBoardOfUsers() {
-        //return null;
-        List<Stats> stats = statsRepository.findTop10ByOrderByAvgWpmDesc();
-        int leaderboard = Math.min(stats.size(),LeaderboardLength);
-
+        List<Stats> stats = statsRepository.findTopN(LeaderboardLength);
         for (Stats s: stats) {
             s.getUser().clear();
         }
-        return stats.subList(0,leaderboard);
+        return stats;
     }
 
     /**
@@ -311,9 +317,10 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public List<Lesson> getUsersLessonsCompleted(User user,Lang lang) {
+
         List<Lesson> lessons = new ArrayList<>();
         List<LessonAttempt> attempts = lessonAttemptRepository.findByUserAndLessonLang(user,lang);
-        if (attempts.size()==0){return null;}
+
         for (LessonAttempt la: attempts) {
             Lesson l = la.getLesson();
             if (!lessons.contains(l)){

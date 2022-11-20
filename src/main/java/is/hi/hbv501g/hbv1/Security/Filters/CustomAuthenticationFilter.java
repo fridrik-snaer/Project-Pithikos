@@ -99,6 +99,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         tokens.put("refreshToken", refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
+
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 }

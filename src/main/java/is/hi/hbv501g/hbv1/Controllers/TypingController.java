@@ -49,7 +49,7 @@ public class TypingController {
      */
     //TODO: refactor path variables to use ?key=value&key2=value2
     @CrossOrigin
-    @RequestMapping(value="/words/{lang}/{rank}", method= RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value="/words/{lang}/{rank}", method=RequestMethod.GET, produces="application/json;charset=UTF-8")
     public List<Word> getRandomWords(@PathVariable String lang,@PathVariable String rank) {
         return typingService.getRandomWords(Lang.valueOf(lang),Integer.parseInt(rank));
     }
