@@ -270,7 +270,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
-        float wpm = (float) (randomAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
+        float wpm = (float) (randomAttempt.getCorrect()/(float)KeystrokesPerWord)/time;
         float acc = (float) randomAttempt.getCorrect()/(float) randomAttempt.getKeystrokes();
         if (isNull(statsRepository.findByUser(user))){
             Stats stats = new Stats(user,wpm,acc,1,randomAttempt.isCompleted() ? 1 : 0);
