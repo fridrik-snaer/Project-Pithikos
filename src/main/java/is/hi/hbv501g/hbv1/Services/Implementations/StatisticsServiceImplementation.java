@@ -40,7 +40,8 @@ public class StatisticsServiceImplementation implements StatisticsService {
      */
     @Override
     public RandomAttempt addRandomAttempt(RandomAttempt randomAttempt) {
-        updateStatsOfUser(randomAttempt.getUser(),randomAttempt);
+        Stats stats = updateStatsOfUser(randomAttempt.getUser(),randomAttempt);
+        if (isNull(stats)){return null;}
         RandomAttempt r = randomAttemptRepository.save(randomAttempt);
         //To prevent infinite recursions
         r.getUser().clear();
@@ -60,7 +61,8 @@ public class StatisticsServiceImplementation implements StatisticsService {
                 quoteAttempt.getQuote().setAccepted(true);
                 quoteRepository.save(quoteAttempt.getQuote());
         }
-        updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
+        Stats stats = updateStatsOfUser(quoteAttempt.getUser(),quoteAttempt);
+        if (isNull(stats)){return null;}
         QuoteAttempt q = quoteAttemptRepository.save(quoteAttempt);
         q.getUser().clear();
         return q;
@@ -220,6 +222,9 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float time_in_ms = (quoteAttempt.getTime_finish().getTime()-quoteAttempt.getTime_start().getTime());
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
+        if(time==0){
+            return null;
+        }
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
         //Reiknum wpm á þessari tilraun
         float wpm = (float) (quoteAttempt.getCorrect()/(float)KeystrokesPerWord)/time;
@@ -269,6 +274,9 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float time_in_ms = (randomAttempt.getTime_finish().getTime()-randomAttempt.getTime_start().getTime());
         float time_in_s = time_in_ms/1000;
         float time = time_in_s/60;
+        if(time==0){
+            return null;
+        }
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
         float wpm = (float) (randomAttempt.getCorrect()/(float)KeystrokesPerWord)/time;
         float acc = (float) randomAttempt.getCorrect()/(float) randomAttempt.getKeystrokes();
