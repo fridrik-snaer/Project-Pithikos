@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter { //This is dep
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //http.csrf().disable();
+        http.csrf().disable();
 //        http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
         http.cors();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
