@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,java,java-web,intellij,intellij+all,intellij+iml,eclipse,maven
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,java,java-web,intellij,intellij+all,intellij+iml,eclipse,maven
 
+.env
+
 ### Eclipse ###
 .metadata
 bin/
