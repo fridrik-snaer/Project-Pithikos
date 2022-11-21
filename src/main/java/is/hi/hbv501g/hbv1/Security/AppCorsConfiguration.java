@@ -1,5 +1,5 @@
 package is.hi.hbv501g.hbv1.Security;
-
+/*
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,3 +22,4 @@ public class AppCorsConfiguration {
         return bean;
     }
 }
+*/
