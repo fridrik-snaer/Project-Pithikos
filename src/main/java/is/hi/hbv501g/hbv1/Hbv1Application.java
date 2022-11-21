@@ -55,8 +55,7 @@ public class Hbv1Application {
      @Bean
      CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        String[] allowedOrigins = {"http://localhost:3000","https://ritill.herokuapp.com"};
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://ritill.herokuapp.com"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
