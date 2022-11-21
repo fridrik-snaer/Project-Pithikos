@@ -13,7 +13,7 @@ import static java.util.Objects.isNull;
 
 @Service
 public class StatisticsServiceImplementation implements StatisticsService {
-    private final int LeaderboardLength = 10;
+    private final int LeaderboardLength = 25;
     private final float KeystrokesPerWord = (float)5.156;
     private final int AttemptsToAccept = 10;
     private final StatsRepository statsRepository;
