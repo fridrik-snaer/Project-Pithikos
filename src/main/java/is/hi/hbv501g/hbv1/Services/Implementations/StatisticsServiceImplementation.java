@@ -222,7 +222,7 @@ public class StatisticsServiceImplementation implements StatisticsService {
         float time = time_in_s/60;
         //TODO ákveða hvort við viljum miða þetta við correct eða keystrokes
         //Reiknum wpm á þessari tilraun
-        float wpm = (float) (quoteAttempt.getKeystrokes()/(float)KeystrokesPerWord)/time;
+        float wpm = (float) (quoteAttempt.getCorrect()/(float)KeystrokesPerWord)/time;
         //Reiknum acc á þessari tilraun
         float acc = (float) quoteAttempt.getCorrect()/(float) quoteAttempt.getKeystrokes();
         //Ef stats eru ekki til þá þarf sértilfælli
