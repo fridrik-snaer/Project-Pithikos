@@ -314,11 +314,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         User reciever = findByUsername(friendRequest.getRequestReciever().getUsername());
         if (isNull(reciever)){
             System.out.println("Reciever not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Reciever not found\"}");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Notandi ekki fundinn\"}");
         }
         if (isNull(sender)){
             System.out.println("Sender not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Sender not found\"}");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("{\"error\":\"Þú ert ekki loggaður inn\"}");
         }
         if (sender.getUsername().equals(reciever.getUsername())){
             System.out.println("Not possible to send yourself friendrequest");
@@ -326,11 +326,11 @@ public class UserServiceImplementation implements UserService, UserDetailsServic
         }
         if (friendshipExists(new Friendship(friendRequest.getRequestSender(),friendRequest.getRequestReciever()))){
             System.out.println("Friendship already exists");
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friendship already exists\"}");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Þú ert nú þegar vinur þessa notenda\"}");
         }
         if (friendRequestExists(friendRequest)){
             System.out.println("Friend request already exists");
-            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Friend request already exists\"}");
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("{\"error\":\"Það er virkt vinabeiðni á milli ykkar\"}");
         }
         FriendRequest toSave = new FriendRequest(sender,reciever);
         friendRequestRepository.save(toSave);
