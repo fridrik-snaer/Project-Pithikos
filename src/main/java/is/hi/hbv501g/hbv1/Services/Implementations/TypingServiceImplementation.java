@@ -20,7 +20,7 @@ public class TypingServiceImplementation implements TypingService {
     private QuoteRepository quoteRepository;
     private LessonRepository lessonRepository;
     private final long millisInDay = 86400000L;
-    private final long the_first_day_millis = 1683737121515L;
+    private final long the_first_day_millis = 1666629921515L;
     private Timestamp theFirstDay = new Timestamp(the_first_day_millis);
 
     @Autowired
@@ -79,10 +79,11 @@ public class TypingServiceImplementation implements TypingService {
      */
     @Override
     public Quote getDailyChallenge(Lang lang) {
-        long diff = System.currentTimeMillis()-theFirstDay.getTime();
+        long diff = System.currentTimeMillis()-the_first_day_millis;
         long day_diff = diff/millisInDay;
         List<Quote> dailies = quoteRepository.findAllByDailyTrue();
-        return dailies.get((int)day_diff%dailies.size());
+        int daily = (int)day_diff%dailies.size();
+        return dailies.get(daily);
     }
 
 
