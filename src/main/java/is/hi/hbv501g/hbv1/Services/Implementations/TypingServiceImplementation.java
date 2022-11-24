@@ -20,7 +20,7 @@ public class TypingServiceImplementation implements TypingService {
     private QuoteRepository quoteRepository;
     private LessonRepository lessonRepository;
     private final long millisInDay = 86400000L;
-    private final long the_first_day_millis = 1666457121515L;
+    private final long the_first_day_millis = 1683737121515L;
     private Timestamp theFirstDay = new Timestamp(the_first_day_millis);
 
     @Autowired
